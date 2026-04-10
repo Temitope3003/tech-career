@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Career Platform | Discover Your Path</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08080f;
+  --surface: #0f0f1a;
+  --card: #141422;
+  --border: rgba(255,255,255,0.07);
+  --text: #eeeef2;
+  --muted: #6a6a80;
+  --accent: #ff6b2b;
+  --accent2: #00d4aa;
+  --radius: 14px;
+  --domain-color: #ff6b2b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── GLOW BLOBS ── */
+body::before {
+  content: ''; position: fixed; top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,107,43,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: ''; position: fixed; bottom: -200px; left: -200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,212,170,0.04) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── NAV BAR ── */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,8,15,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: -0.02em; cursor: pointer; }
+.nav-brand span { color: var(--domain-color); }
+.nav-links { display: flex; gap: 6px; }
+.nav-btn {
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  padding: 7px 16px; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; cursor: pointer; transition: all 0.2s;
+}
+.nav-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.nav-btn.active { background: rgba(255,107,43,0.1); border-color: rgba(255,107,43,0.3); color: var(--accent); }
+
+/* ── SHARED CONTAINER ── */
+.container { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; position: relative; z-index: 1; }
+
+/* ══════════════════════════════
+   INTRO SCREEN
+══════════════════════════════ */
+.hero { text-align: center; padding: 48px 0 40px; }
+.hero-tag {
+  display: inline-block; background: rgba(255,107,43,0.1); color: var(--accent);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 100px; margin-bottom: 20px;
+  border: 1px solid rgba(255,107,43,0.2);
+}
+.hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(32px,6vw,52px); font-weight: 800; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 18px; }
+.hero h1 span { color: var(--accent); }
+.hero p { color: var(--muted); font-size: 17px; line-height: 1.65; max-width: 500px; margin: 0 auto 36px; }
+.hero-stats { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+.hero-stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; text-align: center; min-width: 100px; }
+.hero-stat-num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); display: block; }
+.hero-stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 3px; }
+.btn-primary {
+  background: var(--accent); color: white; border: none; padding: 18px 48px;
+  border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all 0.25s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,107,43,0.3); }
+.domains-preview { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 40px; }
+.domain-preview-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 12px; text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.domain-preview-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.12); }
+.domain-preview-icon { font-size: 24px; margin-bottom: 6px; }
+.domain-preview-name { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* ══════════════════════════════
+   QUIZ SCREEN
+══════════════════════════════ */
+.progress-wrap { margin-bottom: 32px; }
+.progress-meta { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.progress-label { font-size: 13px; color: var(--muted); }
+.progress-count { font-size: 13px; color: var(--accent); font-weight: 600; }
+.progress-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 100px; transition: width 0.4s ease; }
+.question-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 40px; margin-bottom: 20px;
+  opacity: 0; transform: translateY(10px); transition: opacity 0.3s, transform 0.3s;
+}
+.question-card.visible { opacity: 1; transform: translateY(0); }
+.question-num { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+.question-text { font-family: 'Syne', sans-serif; font-size: clamp(18px,3vw,23px); font-weight: 700; line-height: 1.3; margin-bottom: 28px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px;
+  padding: 15px 18px; cursor: pointer; display: flex; align-items: center; gap: 12px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text);
+  text-align: left; width: 100%; transition: all 0.2s;
+}
+.option:hover { border-color: rgba(255,107,43,0.3); background: rgba(255,107,43,0.04); }
+.option.selected { border-color: var(--accent); background: rgba(255,107,43,0.09); }
+.option.multi .option-dot { border-radius: 4px; }
+.option-dot {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.option.selected .option-dot { background: var(--accent); border-color: var(--accent); }
+.option.selected .option-dot::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 2px; display: block; }
+.quiz-nav { display: flex; justify-content: space-between; align-items: center; }
+.btn-back { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); padding: 13px 24px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+.btn-back:hover { background: rgba(255,255,255,0.09); color: var(--text); }
+.btn-next { background: var(--accent); color: white; border: none; padding: 13px 28px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-left: auto; }
+.btn-next:hover { background: #ff7d47; transform: translateY(-1px); }
+.btn-next:disabled { background: rgba(255,107,43,0.22); color: rgba(255,255,255,0.3); cursor: not-allowed; transform: none; }
+
+/* ══════════════════════════════
+   RESULTS SCREEN
+══════════════════════════════ */
+.results-header { text-align: center; margin-bottom: 44px; }
+.results-emoji { font-size: 52px; margin-bottom: 14px; }
+.results-header h2 { font-family: 'Syne', sans-serif; font-size: clamp(24px,4vw,36px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 10px; }
+.results-header p { color: var(--muted); font-size: 16px; }
+.top-match {
+  background: var(--card); border: 1px solid rgba(255,107,43,0.2); border-radius: var(--radius);
+  padding: 36px; margin-bottom: 16px; position: relative; overflow: hidden;
+}
+.top-match::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--domain-color), var(--accent2)); }
+.second-match { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 28px; }
+.match-rank { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--domain-color); margin-bottom: 12px; }
+.second-match .match-rank { color: var(--muted); }
+.match-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.match-icon { font-size: 34px; }
+.match-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
+.second-match .match-title { font-size: 20px; }
+.match-bar-wrap { margin-bottom: 16px; }
+.match-bar-label { font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+.match-bar { height: 5px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+.match-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--domain-color), var(--accent2)); transition: width 1.2s ease 0.2s; }
+.match-desc { color: var(--muted); font-size: 15px; line-height: 1.65; margin-bottom: 18px; }
+.match-aptitude { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+.match-aptitude-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); margin-bottom: 5px; }
+.match-aptitude-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+.match-careers { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.career-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; padding: 6px 14px; font-size: 13px; }
+.btn-roadmap {
+  background: var(--domain-color); color: white; border: none; padding: 14px 28px;
+  border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-roadmap:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.all-scores-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
+.all-scores-card h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+.score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; padding: 6px 8px; border-radius: 8px; transition: background 0.15s; }
+.score-row:hover { background: rgba(255,255,255,0.03); }
+.score-row-name { font-size: 13px; width: 190px; flex-shrink: 0; }
+.score-row-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+.score-row-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+.score-row-num { font-size: 12px; color: var(--muted); width: 24px; text-align: right; }
+.results-note { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 28px; text-align: center; margin-bottom: 20px; }
+.results-note p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+.results-note strong { color: var(--text); }
+.btn-retake { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; transition: all 0.2s; display: block; margin: 0 auto; }
+.btn-retake:hover { background: rgba(255,255,255,0.09); color: var(--text); }
+
+/* ══════════════════════════════
+   ROADMAP SCREEN
+══════════════════════════════ */
+.roadmap-layout { display: flex; min-height: calc(100vh - 57px); }
+.roadmap-sidebar {
+  width: 256px; flex-shrink: 0; background: var(--surface);
+  border-right: 1px solid var(--border); padding: 24px 14px;
+  position: sticky; top: 57px; height: calc(100vh - 57px); overflow-y: auto;
+}
+.sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #505080; margin-bottom: 10px; padding: 0 8px; }
+.domain-nav-btn {
+  width: 100%; text-align: left; background: none; border: none;
+  padding: 9px 10px; border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; gap: 9px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: #6060a0; transition: all 0.18s; margin-bottom: 1px;
+}
+.domain-nav-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.domain-nav-btn.active { background: rgba(255,255,255,0.07); color: var(--text); }
+.domain-nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.domain-nav-btn.active .domain-nav-dot { box-shadow: 0 0 0 3px rgba(255,255,255,0.07); }
+.roadmap-main { flex: 1; padding: 40px 44px; max-width: 880px; overflow-y: auto; }
+.domain-header-rm { margin-bottom: 36px; }
+.domain-badge-rm {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 100px; padding: 7px 16px; margin-bottom: 18px;
+}
+.domain-badge-icon-rm { font-size: 18px; }
+.domain-badge-name-rm { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.domain-header-rm h2 { font-family: 'Syne', sans-serif; font-size: clamp(24px,4vw,38px); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
+.domain-tagline-rm { color: var(--muted); font-size: 16px; line-height: 1.65; max-width: 580px; }
+.domain-stats-rm { display: flex; gap: 16px; margin-top: 22px; flex-wrap: wrap; }
+.domain-stat-rm { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 18px; text-align: center; }
+.domain-stat-num-rm { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; display: block; }
+.domain-stat-label-rm { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+.section-divider { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin: 36px 0 18px; display: flex; align-items: center; gap: 12px; }
+.section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.phases-rm { display: flex; flex-direction: column; gap: 14px; }
+.phase-card-rm { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s; }
+.phase-card-rm:hover { border-color: rgba(255,255,255,0.11); }
+.phase-header-rm { padding: 18px 22px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.phase-left-rm { display: flex; align-items: center; gap: 14px; }
+.phase-num-rm { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; background: rgba(255,255,255,0.06); }
+.phase-title-rm { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+.phase-months-rm { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.phase-chevron-rm { color: var(--muted); font-size: 17px; transition: transform 0.3s; }
+.phase-card-rm.open .phase-chevron-rm { transform: rotate(180deg); }
+.phase-body-rm { display: none; border-top: 1px solid var(--border); }
+.phase-card-rm.open .phase-body-rm { display: block; }
+.phase-grid-rm { padding: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.content-block-rm .cb-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.content-block-rm .cb-title::before { content: ''; width: 3px; height: 11px; border-radius: 2px; background: var(--domain-color); display: block; }
+.cb-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.cb-list li { font-size: 13px; line-height: 1.5; color: #b0b0cc; padding-left: 12px; position: relative; }
+.cb-list li::before { content: ''; position: absolute; left: 0; top: 7px; width: 4px; height: 4px; border-radius: 50%; background: var(--domain-color); opacity: 0.55; }
+.milestone-grid-rm { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.milestone-card-rm { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 13px; }
+.milestone-month-rm { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.milestone-text-rm { font-size: 13px; color: #b0b0cc; line-height: 1.5; }
+.first-step-rm { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-left: 3px solid var(--domain-color); border-radius: var(--radius); padding: 18px 22px; margin-top: 28px; }
+.first-step-label-rm { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 7px; }
+.first-step-text-rm { font-size: 14px; color: #b0b0cc; line-height: 1.65; }
+.first-step-text-rm strong { color: var(--text); }
+.back-to-results { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; cursor: pointer; margin-bottom: 28px; padding: 8px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); transition: all 0.2s; }
+.back-to-results:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+
+/* ── SECTION TITLE COLOR ── */
+.section-divider { color: var(--domain-color); }
+
+/* ── INTAKE SCREEN ── */
+.intake-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 44px 40px; margin-bottom: 24px; }
+.intake-card h2 { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 10px; }
+.intake-card p { color: var(--muted); font-size: 15px; line-height: 1.65; margin-bottom: 32px; }
+.intake-form { display: flex; flex-direction: column; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+.form-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.form-input {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 18px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--accent); background: rgba(255,107,43,0.04); }
+.form-input::placeholder { color: var(--muted); }
+.form-textarea {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
+  transition: border-color 0.2s; resize: vertical; min-height: 130px; line-height: 1.6;
+}
+.form-textarea:focus { border-color: var(--accent); background: rgba(255,107,43,0.04); }
+.form-textarea::placeholder { color: var(--muted); }
+.char-count { font-size: 12px; color: var(--muted); text-align: right; margin-top: -10px; }
+.char-count.ok { color: var(--accent2); }
+.intake-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 8px; line-height: 1.6; }
+.intake-note a { color: var(--accent); text-decoration: none; }
+/* ── SUBMISSION STATUS ── */
+.submit-status { display: none; align-items: center; gap: 10px; padding: 14px 18px; border-radius: 10px; font-size: 14px; margin-top: 12px; }
+.submit-status.success { background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); color: var(--accent2); display: flex; }
+.submit-status.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; display: flex; }
+
+/* ── AI ANALYSIS ── */
+.ai-analysis-wrap { margin-bottom: 24px; }
+.ai-loading {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; text-align: center;
+}
+.ai-spinner {
+  width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.08);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-loading-text { color: var(--muted); font-size: 14px; }
+
+/* stated goal box */
+.goal-stated {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+}
+.goal-stated-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.goal-stated-text { font-size: 15px; color: var(--text); line-height: 1.6; font-style: italic; }
+
+/* alignment status banners */
+.align-match {
+  background: rgba(0,212,170,0.07); border: 1px solid rgba(0,212,170,0.2);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+}
+.align-conflict {
+  background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.25);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+}
+.align-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+.align-match .align-label { color: var(--accent2); }
+.align-conflict .align-label { color: #f59e0b; }
+.align-text { font-size: 15px; line-height: 1.65; }
+.align-match .align-text { color: #a0f0d8; }
+.align-conflict .align-text { color: #fcd88a; }
+
+/* warning box */
+.conflict-warning {
+  background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+}
+.conflict-warning-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #ef4444; margin-bottom: 8px; }
+.conflict-warning-text { font-size: 14px; color: #f9a8a8; line-height: 1.65; }
+
+/* dual roadmap choice */
+.dual-roadmap {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px; margin-bottom: 16px;
+}
+.dual-roadmap-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.dual-roadmap-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-dual {
+  flex: 1; min-width: 180px; padding: 14px 20px; border-radius: 10px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; text-align: center; line-height: 1.4;
+}
+.btn-dual:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.btn-dual small { display: block; font-weight: 400; font-size: 11px; opacity: 0.75; margin-top: 3px; }
+
+/* mentor flag */
+.mentor-flag {
+  background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.25);
+  border-left: 3px solid #8b5cf6;
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 16px;
+}
+.mentor-flag-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8b5cf6; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.mentor-flag-text { font-size: 14px; color: #c4b5f8; line-height: 1.65; }
+
+@media(max-width:860px){
+  .roadmap-layout { flex-direction: column; }
+  .roadmap-sidebar { width: 100%; height: auto; position: static; display: flex; flex-wrap: wrap; gap: 6px; padding: 14px; }
+  .roadmap-main { padding: 24px 18px; }
+  .phase-grid-rm { grid-template-columns: 1fr; }
+  .milestone-grid-rm { grid-template-columns: 1fr; }
+  .domains-preview { grid-template-columns: repeat(2,1fr); }
+}
+@media(max-width:520px){
+  .question-card { padding: 24px 18px; }
+  .top-match { padding: 24px 18px; }
+  .hero h1 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand" onclick="goHome()">Tech Career <span>Platform</span></div>
+  <div class="nav-links">
+    <button class="nav-btn active" id="navQuiz" onclick="goHome()">Questionnaire</button>
+    <button class="nav-btn" id="navRoadmaps" onclick="goRoadmaps(-1)">All Roadmaps</button>
+  </div>
+</nav>
+
+<!-- ════════════ SCREEN: INTAKE ════════════ -->
+<div class="screen" id="screenIntake">
+  <div class="container">
+    <div style="padding-top:40px">
+      <div class="hero-tag" style="display:inline-block;margin-bottom:24px">MLOps Mentorship Program</div>
+      <div class="intake-card">
+        <h2>Before we begin</h2>
+        <p>Enter your name and email so your mentor can follow up with your results and build your personal learning plan. Your information is only shared with your mentor.</p>
+        <div class="intake-form">
+          <div class="form-group">
+            <label class="form-label" for="inputName">Full Name</label>
+            <input class="form-input" type="text" id="inputName" placeholder="e.g. Amara Johnson" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputEmail">Email Address</label>
+            <input class="form-input" type="email" id="inputEmail" placeholder="e.g. amara@email.com" autocomplete="email">
+          </div>
+          <button class="btn-primary" onclick="submitIntake()" id="intakeBtn" style="margin-top:8px">Continue to Questionnaire &rarr;</button>
+          <p class="intake-note">Your data goes directly to your mentor's Google Sheet. It is never sold or shared with third parties.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: GOALS ════════════ -->
+<div class="screen" id="screenGoals">
+  <div class="container">
+    <div style="padding-top:40px">
+      <div class="hero-tag" style="display:inline-block;margin-bottom:24px">Step 2 of 3</div>
+      <div class="intake-card">
+        <h2>What do you want to learn?</h2>
+        <p>In your own words, describe what you want to do in tech. What career are you dreaming about? What problems do you want to solve? There are no wrong answers here.</p>
+        <div class="intake-form">
+          <div class="form-group">
+            <label class="form-label" for="inputGoal">Your goal in tech</label>
+            <textarea
+              class="form-textarea"
+              id="inputGoal"
+              placeholder="e.g. I want to build mobile apps that help people in my community manage their finances. I love design and want to create things people actually enjoy using every day..."
+              oninput="updateCharCount()"
+              maxlength="800"
+            ></textarea>
+            <div class="char-count" id="charCount">0 / 800</div>
+          </div>
+          <button class="btn-primary" onclick="submitGoal()" id="goalBtn">Continue to Assessment &rarr;</button>
+          <p class="intake-note">Your goal will be compared against your assessment results to check if they align. Your mentor will see both.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: INTRO ════════════ -->
+<div class="screen active" id="screenIntro">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-tag">MLOps Mentorship Program</div>
+      <h1>Find Your <span>Tech Career</span><br>Path</h1>
+      <p>Answer 18 questions. Get a personalized career match and your full 12-month learning roadmap in one place.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="hero-stat-num">18</span><div class="hero-stat-label">Questions</div></div>
+        <div class="hero-stat"><span class="hero-stat-num">8</span><div class="hero-stat-label">Domains</div></div>
+        <div class="hero-stat"><span class="hero-stat-num">28</span><div class="hero-stat-label">Careers</div></div>
+        <div class="hero-stat"><span class="hero-stat-num">8 min</span><div class="hero-stat-label">To Complete</div></div>
+      </div>
+      <button class="btn-primary" onclick="goIntake()">Start the Questionnaire &rarr;</button>
+    </div>
+    <div class="domains-preview" id="domainsPreview"></div>
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: QUIZ ════════════ -->
+<div class="screen" id="screenQuiz">
+  <div class="container">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label">Your progress</span>
+        <span class="progress-count" id="progressCount">1 of 18</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:4%"></div></div>
+    </div>
+    <div class="question-card" id="questionCard">
+      <div class="question-num" id="questionNum">Question 1</div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+    <div class="quiz-nav">
+      <button class="btn-back" id="backBtn" onclick="prevQuestion()" style="visibility:hidden">← Back</button>
+      <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: RESULTS ════════════ -->
+<div class="screen" id="screenResults">
+  <div class="container">
+    <div class="results-header">
+      <div class="results-emoji" id="resultsEmoji">🎯</div>
+      <h2>Your Career Match</h2>
+      <p id="resultsSubtext">Based on your answers, here is where you naturally fit.</p>
+    </div>
+    <div class="ai-analysis-wrap" id="aiAnalysisWrap" style="display:none"></div>
+    <div class="top-match" id="topMatchCard"></div>
+    <div class="second-match" id="secondMatchCard"></div>
+    <div class="all-scores-card">
+      <h3>All Domain Scores</h3>
+      <div id="allScoresContent"></div>
+    </div>
+    <div class="results-note">
+      <p><strong>Share these results with your mentor.</strong> They will use this to build your personal 12-month learning roadmap and recommend the right courses, training, and projects for you.</p>
+    </div>
+    <button class="btn-retake" onclick="restartQuiz()">Retake the questionnaire</button>
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: ROADMAP ════════════ -->
+<div class="screen" id="screenRoadmap">
+  <div class="roadmap-layout">
+    <aside class="roadmap-sidebar" id="roadmapSidebar"></aside>
+    <main class="roadmap-main" id="roadmapMain"></main>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────
+const questions = [
+  { text: "What best describes your background right now?", options: [
+    { text: "No tech background at all", scores: [0,0,0,0,0,1,0,2] },
+    { text: "Some coding or tech exposure", scores: [1,1,2,2,1,0,1,0] },
+    { text: "Business or admin background", scores: [0,1,0,0,0,2,0,2] },
+    { text: "Creative or design background", scores: [0,0,1,0,0,3,1,1] },
+    { text: "Science or math background", scores: [2,2,1,1,0,0,1,0] }
+  ]},
+  { text: "When you face a problem, your first instinct is to:", options: [
+    { text: "Break it into logical steps and solve it", scores: [1,1,2,2,1,0,0,0] },
+    { text: "Look for patterns or trends in the situation", scores: [1,2,0,0,0,0,0,0] },
+    { text: "Think about who is affected and what they need", scores: [0,0,0,0,0,2,0,2] },
+    { text: "Find the flaw or weak point in the system", scores: [0,0,1,1,3,0,1,0] },
+    { text: "Imagine a completely different approach", scores: [2,0,1,0,0,1,3,0] },
+    { text: "Organize the moving parts and manage the process", scores: [0,1,0,1,0,1,0,3] }
+  ]},
+  { multi: true, text: "Which activity sounds most exciting to you? (Select all that apply)", options: [
+    { text: "Writing code that builds something from scratch", scores: [0,0,3,0,0,0,0,0] },
+    { text: "Setting up and automating systems", scores: [0,0,0,3,0,0,0,0] },
+    { text: "Analyzing data to find useful insights", scores: [1,3,0,0,0,0,0,0] },
+    { text: "Designing apps and user experiences", scores: [0,0,0,0,0,3,0,0] },
+    { text: "Protecting systems from attackers", scores: [0,0,0,0,3,0,0,0] },
+    { text: "Supporting and organizing a high-performing team", scores: [0,0,0,0,0,0,0,3] },
+    { text: "Building AI-powered tools and models", scores: [3,0,0,0,0,0,1,0] },
+    { text: "Exploring blockchain, AR/VR, or robotics", scores: [0,0,0,0,0,0,3,0] }
+  ]},
+  { text: "How do you feel about math and statistics?", options: [
+    { text: "I enjoy them and use them comfortably", scores: [2,2,1,0,0,0,1,0] },
+    { text: "I can handle basic math when I need to", scores: [0,1,1,1,1,1,1,0] },
+    { text: "I prefer working without heavy math", scores: [0,0,1,1,1,2,0,2] }
+  ]},
+  { multi: true, text: "What kind of work environment appeals to you most? (Select all that apply)", options: [
+    { text: "Deep technical focus, solving hard problems", scores: [2,1,1,2,2,0,1,0] },
+    { text: "Collaborating with teams and different people", scores: [0,0,0,0,0,2,0,2] },
+    { text: "Building visible things people interact with daily", scores: [0,0,2,0,0,2,0,0] },
+    { text: "Working remotely with full flexibility", scores: [0,0,0,0,0,0,0,3] },
+    { text: "Exploring new and undefined territory", scores: [2,0,0,0,0,0,3,0] }
+  ]},
+  { multi: true, text: "What kind of impact do you want your work to have? (Select all that apply)", options: [
+    { text: "Build products that millions of people use", scores: [0,0,2,0,0,2,0,0] },
+    { text: "Keep critical systems safe and protected", scores: [0,0,0,1,3,0,0,0] },
+    { text: "Help organizations make smarter decisions", scores: [1,3,0,0,0,1,0,0] },
+    { text: "Support and empower high-performing people", scores: [0,0,0,0,0,1,0,3] },
+    { text: "Shape what technology looks like in the future", scores: [3,0,0,0,0,0,3,0] },
+    { text: "Keep infrastructure running reliably at scale", scores: [0,0,0,3,0,0,0,0] }
+  ]},
+  { text: "How do you feel about visual and creative work?", options: [
+    { text: "It is one of my strongest skills", scores: [0,0,0,0,0,3,0,1] },
+    { text: "I appreciate good design but prefer building logic", scores: [0,0,2,1,1,0,1,0] },
+    { text: "I prefer purely technical work with no design", scores: [1,2,1,2,2,0,0,0] }
+  ]},
+  { text: "When something breaks or goes wrong, you:", options: [
+    { text: "Want to find the root cause immediately", scores: [0,0,0,2,3,0,0,0] },
+    { text: "Look at data to understand what happened", scores: [1,3,0,0,0,0,0,0] },
+    { text: "Fix the broken thing and move on quickly", scores: [0,0,3,0,0,0,0,0] },
+    { text: "Think about how users were affected", scores: [0,0,0,0,0,3,0,0] },
+    { text: "Find the right person to handle it", scores: [0,0,0,0,0,0,0,3] }
+  ]},
+  { multi: true, text: "Which have you tried or feel most drawn to? (Select all that apply)", options: [
+    { text: "Spreadsheets and organizing data", scores: [0,2,0,0,0,0,0,2] },
+    { text: "Building or tinkering with websites", scores: [0,0,3,0,0,1,0,0] },
+    { text: "Setting up software or tools for a team", scores: [0,0,0,2,0,0,0,2] },
+    { text: "Managing calendars, emails, and schedules", scores: [0,0,0,0,0,0,0,3] },
+    { text: "Drawing wireframes or designing interfaces", scores: [0,0,0,0,0,3,0,0] },
+    { text: "Writing scripts or automations", scores: [1,0,1,3,0,0,1,0] },
+    { text: "Hacking, gaming, or probing how systems work", scores: [1,0,1,0,3,0,1,0] },
+    { text: "Using AI tools like ChatGPT or Midjourney", scores: [3,0,0,0,0,0,1,1] }
+  ]},
+  { text: "What is your target income in 3 years?", options: [
+    { text: "Stable income first, I will grow over time", scores: [0,0,1,1,0,0,0,2] },
+    { text: "$30,000 to $60,000 per year", scores: [0,1,1,1,0,0,0,2] },
+    { text: "$60,000 to $100,000 per year", scores: [1,1,1,2,2,1,0,0] },
+    { text: "$100,000+ and I will put in the work", scores: [2,1,1,1,2,1,2,0] }
+  ]},
+  { text: "How do you prefer to learn new skills?", options: [
+    { text: "Deep dives into one subject until I master it", scores: [2,2,2,2,2,0,0,0] },
+    { text: "Mixing different skills and topics together", scores: [0,0,1,1,0,2,2,2] },
+    { text: "Building and experimenting hands-on", scores: [1,0,2,2,1,1,2,0] },
+    { text: "Watching, copying, and practicing what I see", scores: [0,1,1,0,0,2,0,2] }
+  ]},
+  { text: "Which sentence describes you best?", options: [
+    { text: "I like building reliable systems that work behind the scenes", scores: [1,1,2,3,0,0,0,0] },
+    { text: "I like making things people can see and interact with", scores: [0,0,2,0,0,3,0,0] },
+    { text: "I like protecting and securing systems from threats", scores: [0,0,0,1,3,0,0,0] },
+    { text: "I like organizing and making sense of information", scores: [0,2,0,0,0,0,0,2] },
+    { text: "I like supporting and helping others succeed", scores: [0,0,0,0,0,1,0,3] },
+    { text: "I like being at the edge of what is possible", scores: [3,0,0,0,0,0,3,0] }
+  ]},
+  { text: "Do you prefer working alone, in a small team, or directly with clients every day?", options: [
+    { text: "Alone, with deep uninterrupted focus", scores: [2,2,2,2,2,0,1,0] },
+    { text: "Small technical team, everyone pulls their weight", scores: [1,1,1,2,1,1,1,0] },
+    { text: "Directly with clients and different people daily", scores: [0,0,0,0,0,2,0,3] },
+    { text: "A mix, I adapt to what the situation needs", scores: [1,1,1,0,0,2,1,2] }
+  ]},
+  { text: "Are you comfortable speaking up, presenting, or leading conversations?", options: [
+    { text: "Yes, I enjoy it and it comes naturally", scores: [0,0,0,0,0,3,0,3] },
+    { text: "I can do it when needed but I prefer not to", scores: [1,1,1,1,1,0,1,0] },
+    { text: "I strongly prefer working quietly in the background", scores: [2,2,2,2,2,0,1,0] }
+  ]},
+  { text: "Do you prefer going very deep on one thing for weeks, or switching between different tasks daily?", options: [
+    { text: "Deep focus on one thing for a long time", scores: [3,2,2,2,2,0,1,0] },
+    { text: "Switching between different tasks every day", scores: [0,1,0,0,0,2,0,3] },
+    { text: "A mix of both depending on the phase", scores: [1,1,1,1,1,2,1,1] }
+  ]},
+  { text: "Are you comfortable with structured, repeatable work or do you need constant new challenges?", options: [
+    { text: "I prefer structured, repeatable work", scores: [0,1,0,1,1,0,0,3] },
+    { text: "I need constant new challenges to stay engaged", scores: [2,0,1,0,1,1,3,0] },
+    { text: "I like both depending on the project", scores: [1,1,1,1,1,1,1,1] }
+  ]},
+  { text: "How confident are you putting your thoughts into clear writing?", options: [
+    { text: "Very confident, writing is one of my strengths", scores: [0,1,0,0,0,3,0,3] },
+    { text: "Average, I get my point across", scores: [1,1,1,1,1,1,1,1] },
+    { text: "I prefer technical work over writing", scores: [2,2,2,2,2,0,1,0] }
+  ]},
+  { text: "How many hours per week can you realistically commit to learning right now?", options: [
+    { text: "Less than 5 hours", scores: [0,0,0,0,0,1,0,2] },
+    { text: "5 to 10 hours", scores: [0,1,1,1,0,1,0,1] },
+    { text: "10 to 20 hours", scores: [1,1,1,1,1,1,1,0] },
+    { text: "20+ hours, I am fully committed", scores: [2,2,2,2,2,1,2,0] }
+  ]},
+  { text: "What kind of career structure do you want?", options: [
+    { text: "Stable salaried job with clear growth", scores: [1,1,1,1,1,0,0,0] },
+    { text: "Freelance or contract work on my own terms", scores: [0,1,1,0,1,1,0,3] },
+    { text: "Build my own business or agency over time", scores: [1,0,0,0,0,2,2,2] },
+    { text: "I am open to all of them right now", scores: [1,1,1,1,1,1,1,1] }
+  ]}
+];
+
+const domains = [
+  { name:"AI & Machine Learning", icon:"🤖", color:"#ff6b2b",
+    tagline:"Build systems that learn from data and make intelligent decisions.",
+    aptitude:"Pattern recognition, comfort with math, systems thinking.",
+    careers:["ML Engineer","MLOps Engineer","AI Product Manager"],
+    firstStep:"Go to <strong>cs50.harvard.edu/python</strong> today and enroll. It is free and takes about 6 weeks. Create your GitHub account and push your first repository before the end of week one.",
+    phases:[
+      { title:"Foundations", months:"Months 1 to 3",
+        skills:["Python programming (freeCodeCamp or CS50P)","Math for ML (Khan Academy Statistics)","Git & GitHub (GitHub Learning Lab)","Linux command line (OverTheWire Bandit)","Jupyter Notebooks setup"],
+        courses:["CS50P - Harvard Python, free on edX","Khan Academy Statistics - free, self-paced","The Missing Semester (MIT) - Linux & Git, free","Python for Everybody - Coursera, audit free"],
+        projects:["Build a Python script that cleans and analyzes a CSV","Create a GitHub profile with 3 beginner repos","Automate a personal task with Python"],
+        milestones:[["Month 1","Write and run Python scripts confidently"],["Month 2","Push first project to GitHub"],["Month 3","Understand basic statistics and probability"]]
+      },
+      { title:"ML Fundamentals", months:"Months 4 to 6",
+        skills:["Machine learning concepts: supervised, unsupervised","Scikit-learn: model training and evaluation","Pandas & NumPy: data manipulation","Data visualization: Matplotlib and Seaborn","Model evaluation: accuracy, precision, recall, F1"],
+        courses:["Andrew Ng ML Specialization - Coursera, audit free","Kaggle ML Courses - free, hands-on micro-courses","Fast.ai Practical ML - free, project-first","Google ML Crash Course - free, interactive"],
+        projects:["Train a classification model on a Kaggle dataset","Build an end-to-end ML pipeline","Enter one Kaggle beginner competition"],
+        milestones:[["Month 4","Understand how supervised learning works"],["Month 5","Train first ML model with Scikit-learn"],["Month 6","Submit first Kaggle competition entry"]]
+      },
+      { title:"MLOps & Deployment", months:"Months 7 to 9",
+        skills:["MLflow: experiment tracking and model registry","Docker: containerizing ML models","FastAPI: serving models as REST APIs","CI/CD for ML: GitHub Actions","Cloud ML: AWS SageMaker or Google Vertex AI basics"],
+        courses:["DataTalks.Club MLOps Zoomcamp - free","TechWorld with Nana Docker - YouTube, free","FastAPI Official Tutorial - free","AWS ML Specialty Prep - free sample content"],
+        projects:["Deploy an ML model as a REST API with FastAPI and Docker","Set up MLflow tracking for an existing project","Build a CI/CD pipeline that retests a model on new data"],
+        milestones:[["Month 7","Run ML experiments with MLflow tracking"],["Month 8","Containerize and deploy a model with Docker"],["Month 9","Have a deployed API accessible via URL"]]
+      },
+      { title:"Job Readiness", months:"Months 10 to 12",
+        skills:["System design for ML: feature stores, model monitoring","Interview preparation: ML system design questions","Technical writing: document everything you built","Networking: LinkedIn and Twitter/X ML community","Portfolio polish: README files, demos, write-ups"],
+        courses:["Grokking ML Interview - Educative.io","ML System Design on YouTube - free","Write on Medium or Hashnode - document publicly"],
+        projects:["Capstone: end-to-end ML system with monitoring","Write 2 technical articles about your projects","Contribute to one open source ML project on GitHub"],
+        milestones:[["Month 10","Start applying to entry-level ML/MLOps roles"],["Month 11","Portfolio with 3 deployed projects live"],["Month 12","Complete 5 mock interviews with peers"]]
+      }
+    ]
+  },
+  { name:"Data", icon:"📊", color:"#3b82f6",
+    tagline:"Transform raw numbers into decisions that move organizations forward.",
+    aptitude:"Detail orientation, curiosity about numbers, logical thinking.",
+    careers:["Data Engineer","Data Analyst","Analytics Engineer"],
+    firstStep:"Go to <strong>mode.com/sql-tutorial</strong> today and complete the first three sections this week. Free, no setup required. Open a Google Sheet alongside and practice every query.",
+    phases:[
+      { title:"Foundations", months:"Months 1 to 3",
+        skills:["Excel & Google Sheets: pivot tables, VLOOKUP, charts","SQL basics: SELECT, WHERE, JOIN, GROUP BY","Data fundamentals: types, cleaning, structure","Basic statistics: mean, median, distributions","Git & GitHub: version control basics"],
+        courses:["Mode SQL Tutorial - free, excellent for beginners","Khan Academy Statistics - free","Excel for Beginners (GCF Global) - free","Google Data Analytics Certificate - Coursera, audit free"],
+        projects:["Analyze a public dataset using Excel","Write 10 SQL queries on a real database","Clean a messy CSV and document every change"],
+        milestones:[["Month 1","Complete Mode SQL tutorial all the way through"],["Month 2","Build one Excel dashboard with pivot tables"],["Month 3","Understand mean, median, variance, and distributions"]]
+      },
+      { title:"Python & Visualization", months:"Months 4 to 6",
+        skills:["Python with Pandas: data manipulation","NumPy: numerical computing basics","Matplotlib & Seaborn: static data visualization","Tableau or Power BI: BI dashboards","Advanced SQL: window functions, CTEs, subqueries"],
+        courses:["Kaggle Python & Pandas Courses - free","Tableau Public Training Videos - free","Mode Analytics Advanced SQL - free","Data Visualization Society resources - free"],
+        projects:["Build a Tableau Public dashboard on a topic you care about","Analyze a dataset end-to-end with Python","Recreate a news chart with your own data"],
+        milestones:[["Month 4","Manipulate DataFrames in Pandas comfortably"],["Month 5","Publish first Tableau Public visualization"],["Month 6","Write window functions and CTEs in SQL"]]
+      },
+      { title:"Data Engineering & dbt", months:"Months 7 to 9",
+        skills:["dbt: transform data in your warehouse","Data pipelines: ETL concepts, Airflow basics","Cloud data warehouses: BigQuery or Snowflake (free tiers)","Data modeling: star schema, dimension tables","Python automation: scheduling scripts"],
+        courses:["dbt Learn - free official platform","DataTalks.Club Data Engineering Zoomcamp - free","Google BigQuery free tier - real warehouse practice","Astronomer Airflow Tutorial - free"],
+        projects:["Build a simple ETL pipeline from a public API","Create a dbt project with 5 transformation models","Automate a weekly data report using Python"],
+        milestones:[["Month 7","Load and query data in BigQuery or Snowflake"],["Month 8","Build first dbt models and document them"],["Month 9","Have a working automated pipeline on GitHub"]]
+      },
+      { title:"Job Readiness", months:"Months 10 to 12",
+        skills:["Business communication: presenting data to non-technical audiences","Storytelling with data: context, insight, recommendation","Interview prep: SQL challenges, case studies","Portfolio: 3 end-to-end projects documented publicly","Networking: LinkedIn, data communities"],
+        courses:["LeetCode SQL 50 - free, targeted interview prep","Storytelling with Data book - Cole Nussbaumer Knaflic","DataTalks.Club community - free, active job board"],
+        projects:["Capstone: real problem, collect, clean, analyze, present","Write 2 posts on LinkedIn or Medium","Create a public portfolio page"],
+        milestones:[["Month 10","Start applying to analyst and data roles"],["Month 11","Complete LeetCode SQL 50 challenge"],["Month 12","Present capstone project in a mock interview"]]
+      }
+    ]
+  },
+  { name:"Software Engineering", icon:"💻", color:"#8b5cf6",
+    tagline:"Build the applications and digital products that people use every day.",
+    aptitude:"Logical thinking, problem decomposition, patience with debugging.",
+    careers:["Backend Engineer","Frontend Engineer","Full Stack Engineer","Mobile Engineer"],
+    firstStep:"Go to <strong>theodinproject.com</strong> today and start the Foundations path. Free, structured, and project-based from day one. Create your GitHub account the same day.",
+    phases:[
+      { title:"Foundations", months:"Months 1 to 3",
+        skills:["Python or JavaScript: pick one and commit","Variables, loops, functions: core programming concepts","Git & GitHub: version control from day one","Command line basics: navigation, file management","Problem solving: breaking problems into smaller steps"],
+        courses:["The Odin Project - free, full-stack, project-based","freeCodeCamp - free, structured with certificates","CS50x (Harvard) - free on edX","Python.org Official Tutorial - free, authoritative"],
+        projects:["Build a command line calculator","Create a number guessing game or to-do list app","Push every project to GitHub with a README"],
+        milestones:[["Month 1","Understand variables, loops, and functions"],["Month 2","Solve 10 beginner problems on Codewars"],["Month 3","Have 3 projects on GitHub with documentation"]]
+      },
+      { title:"Core Engineering", months:"Months 4 to 6",
+        skills:["Object-oriented programming: classes, inheritance","Databases: SQL basics, connecting to code","REST APIs: how web services communicate","Testing: writing basic unit tests","Error handling: debugging and reading stack traces"],
+        courses:["The Odin Project Node.js or Python Path - free","SQLBolt - free interactive SQL exercises","REST API tutorial (restfulapi.net) - free","pytest or Jest documentation - free"],
+        projects:["Build a simple REST API that reads and writes to a database","Create a personal budget tracker with a backend","Add tests to one of your existing projects"],
+        milestones:[["Month 4","Build a class-based system in your language"],["Month 5","Connect an app to a real SQL database"],["Month 6","Build and document a working REST API"]]
+      },
+      { title:"Frameworks & Full Projects", months:"Months 7 to 9",
+        skills:["Web framework: Django or Flask (Python) or Express (JS)","Frontend basics: HTML, CSS, one page of JavaScript","Authentication: user login and sessions","Deployment: Heroku, Render, or Railway (free tiers)","Environment variables and security basics"],
+        courses:["Django for Beginners (book) - William Vincent","Full Stack Open - University of Helsinki, free","Traversy Media on YouTube - free, practical projects","Render.com Deployment Docs - free tier"],
+        projects:["Build a full web app with user login, database, and deployed URL","Build a public API that others can use","Clone a simple popular app (blog, task manager)"],
+        milestones:[["Month 7","Deploy first web app to a live URL"],["Month 8","Add user authentication to a project"],["Month 9","Build something you would actually use daily"]]
+      },
+      { title:"Job Readiness", months:"Months 10 to 12",
+        skills:["Data structures & algorithms: arrays, linked lists, trees","System design basics: how to architect a simple system","Code review etiquette: pull requests and collaboration","Technical interviews: LeetCode and HackerRank prep","Open source contribution: find beginner-friendly issues"],
+        courses:["NeetCode on YouTube - free DSA preparation","LeetCode (free tier) - focus on Easy problems first","Pramp - free mock technical interviews","roadmap.sh - free, visual learning paths"],
+        projects:["Capstone: a real app that solves a real community problem","Open source contribution: one merged pull request","Technical blog: document how you built your capstone"],
+        milestones:[["Month 10","Solve 30 LeetCode Easy problems"],["Month 11","Start applying, target 10 applications per week"],["Month 12","Complete 5 mock technical interviews"]]
+      }
+    ]
+  },
+  { name:"Cloud & Infrastructure", icon:"☁️", color:"#06b6d4",
+    tagline:"Design and run the systems that power every modern software product.",
+    aptitude:"Love for automation, systems thinking, comfort with failure analysis.",
+    careers:["Cloud Engineer","DevOps Engineer","Site Reliability Engineer (SRE)"],
+    firstStep:"Set up <strong>WSL (Windows Subsystem for Linux)</strong> today if you are on Windows, or boot Ubuntu. Then go to <strong>overthewire.org/wargames/bandit</strong> and complete the first 10 levels.",
+    phases:[
+      { title:"Foundations", months:"Months 1 to 3",
+        skills:["Linux command line: navigation, permissions, processes","Networking basics: IP, DNS, HTTP, TCP/IP","Bash scripting: automate repetitive tasks","Git & GitHub: version control for infrastructure","Python basics: read and write simple scripts"],
+        courses:["OverTheWire Bandit - free Linux practice through puzzles","The Missing Semester (MIT) - free, practical tools","Networking Fundamentals (Professor Messer) - free YouTube","Ryan's Linux Tutorials - free, beginner-friendly"],
+        projects:["Write 5 bash scripts that automate real tasks","Set up a local Linux environment (WSL on Windows)","Document your home network structure with a diagram"],
+        milestones:[["Month 1","Navigate and manage files in Linux comfortably"],["Month 2","Write and run your first bash automation script"],["Month 3","Explain how DNS and HTTP work in your own words"]]
+      },
+      { title:"Cloud Fundamentals", months:"Months 4 to 6",
+        skills:["AWS or GCP core services: compute, storage, networking","Docker: containers, images, Dockerfile, docker-compose","Cloud CLI tools: AWS CLI or gcloud","Cloud IAM: identity, roles, and permissions","S3, EC2, VPC basics: the most used AWS services"],
+        courses:["AWS Cloud Practitioner Essentials - free on AWS Skill Builder","TechWorld with Nana Docker - free on YouTube","A Cloud Guru free tier - hands-on labs","AWS Free Tier account - practice with real services"],
+        projects:["Deploy a static website to AWS S3","Run a Docker container locally and push to Docker Hub","Launch an EC2 instance and serve a web page"],
+        milestones:[["Month 4","Pass AWS Cloud Practitioner certification"],["Month 5","Build and push your first Docker image"],["Month 6","Deploy a real application to AWS"]]
+      },
+      { title:"DevOps & Automation", months:"Months 7 to 9",
+        skills:["Kubernetes basics: pods, deployments, services, namespaces","Terraform: infrastructure as code","CI/CD pipelines: GitHub Actions, automated deployments","Monitoring: CloudWatch, Prometheus basics","Ansible basics: configuration management"],
+        courses:["KodeKloud Kubernetes for Beginners - free tier","HashiCorp Terraform tutorials - free official platform","GitHub Actions official docs - free","TechWorld with Nana Kubernetes - free YouTube series"],
+        projects:["Deploy a containerized app to Kubernetes (Minikube locally)","Write Terraform code that creates AWS VPC, EC2, and S3","Build a GitHub Actions pipeline that deploys on every push"],
+        milestones:[["Month 7","Deploy a service to Kubernetes with kubectl"],["Month 8","Provision infrastructure with Terraform"],["Month 9","Have a full CI/CD pipeline running on GitHub"]]
+      },
+      { title:"Job Readiness", months:"Months 10 to 12",
+        skills:["AWS Solutions Architect Associate: industry-standard cert","Site reliability concepts: SLOs, SLAs, error budgets","Incident response: runbooks, on-call, postmortems","Cost optimization: right-sizing, reserved instances","Interview prep: infrastructure design questions"],
+        courses:["AWS Solutions Architect Associate prep - Adrian Cantrill","Google SRE Book - free online at sre.google","TechWorld with Nana interview prep - YouTube, free"],
+        projects:["Capstone: fully automated cloud infrastructure with monitoring","Document one incident response with a postmortem write-up","Contribute to an open source DevOps tool on GitHub"],
+        milestones:[["Month 10","Pass AWS Solutions Architect Associate exam"],["Month 11","Start applying to DevOps and Cloud Engineer roles"],["Month 12","Complete 5 infrastructure design mock interviews"]]
+      }
+    ]
+  },
+  { name:"Security", icon:"🔐", color:"#ef4444",
+    tagline:"Protect systems, data, and people from digital threats. Needed everywhere, paid well.",
+    aptitude:"Adversarial thinking, attention to detail, persistence.",
+    careers:["Cybersecurity Analyst","Penetration Tester","Security Engineer"],
+    firstStep:"Create a free account at <strong>tryhackme.com</strong> today and start the Pre-Security learning path. It guides you from zero with interactive browser-based labs. No setup needed.",
+    phases:[
+      { title:"Foundations", months:"Months 1 to 3",
+        skills:["Networking fundamentals: TCP/IP, DNS, HTTP, firewalls","Linux command line: essential for security work","Security concepts: CIA triad, threat models, attack surfaces","Operating system basics: Windows and Linux internals","Cryptography basics: encryption, hashing, certificates"],
+        courses:["Professor Messer CompTIA A+ & Network+ - free YouTube","TryHackMe Pre-Security Path - free, interactive","Cybrary Introduction to IT & Cybersecurity - free","OverTheWire Bandit - free Linux practice"],
+        projects:["Set up a home lab with one Linux VM and one Windows VM","Run Wireshark and analyze your own network traffic","Document 5 recent real-world breaches and what caused them"],
+        milestones:[["Month 1","Explain networking concepts without looking them up"],["Month 2","Complete TryHackMe Pre-Security path"],["Month 3","Set up a working home lab environment"]]
+      },
+      { title:"Core Security Skills", months:"Months 4 to 6",
+        skills:["CompTIA Security+: industry entry-level certification","Vulnerability scanning: Nmap, Nessus basics","Web security basics: OWASP Top 10 vulnerabilities","SIEM basics: log analysis and alerting","Incident response basics: triage, containment, reporting"],
+        courses:["Professor Messer Security+ SY0-701 - free on YouTube","TryHackMe SOC Level 1 Path - free tier","OWASP Testing Guide - free official documentation","Hack The Box Starting Point - free beginner machines"],
+        projects:["Set up DVWA or Metasploitable and run your first scan","Analyze a SIEM log file and identify one suspicious pattern","Write a simple incident response report template"],
+        milestones:[["Month 4","Pass CompTIA Security+ certification"],["Month 5","Complete OWASP Top 10 study and practice"],["Month 6","Compromise your first intentionally vulnerable machine"]]
+      },
+      { title:"Offensive & Defensive Skills", months:"Months 7 to 9",
+        skills:["Penetration testing methodology: recon, scan, exploit, report","Metasploit Framework: exploitation and post-exploitation","Burp Suite: web application testing","Python for security: write scripts for automation","Cloud security basics: AWS security services"],
+        courses:["TryHackMe Jr Penetration Tester Path - structured","PortSwigger Web Security Academy - free, comprehensive","Hack The Box Academy - free tier, lab-based","TCM Security courses - affordable and practical"],
+        projects:["Complete 10 Hack The Box machines and write walkthroughs","Test DVWA locally for all OWASP Top 10 vulnerabilities","Write a Python script that automates a basic port scan"],
+        milestones:[["Month 7","Compromise 5 Hack The Box machines"],["Month 8","Complete PortSwigger SQL Injection labs"],["Month 9","Write a professional penetration test report"]]
+      },
+      { title:"Job Readiness", months:"Months 10 to 12",
+        skills:["CEH or eJPT certification: entry-level pen testing cert","CTF competitions: build your competitive profile","Bug bounty programs: HackerOne or Bugcrowd","Security portfolio: walkthroughs, reports, write-ups","Interview prep: scenario-based security questions"],
+        courses:["eJPT (eLearnSecurity) - affordable, practical certification","CTFtime.org - free, lists upcoming competitions","HackerOne Hacker101 - free, teaches bug bounty basics"],
+        projects:["Participate in 3 CTF competitions and document findings","Submit one valid bug bounty report on HackerOne","Build a public security blog with 5 machine walkthrough write-ups"],
+        milestones:[["Month 10","Earn eJPT or CEH certification"],["Month 11","Start applying to SOC Analyst and security roles"],["Month 12","Have first bug bounty submission submitted"]]
+      }
+    ]
+  },
+  { name:"Product & Design", icon:"🎨", color:"#ec4899",
+    tagline:"Decide what gets built and design how it looks and feels. Bridge tech and people.",
+    aptitude:"Empathy, communication, visual thinking, ability to prioritize.",
+    careers:["Product Manager","UX/UI Designer","Product Designer"],
+    firstStep:"Create a free <strong>Figma account</strong> at figma.com today. Watch the beginner series on their official YouTube channel (free, under 2 hours). Then enroll in Google's UX Design Certificate on Coursera.",
+    phases:[
+      { title:"Foundations", months:"Months 1 to 3",
+        skills:["Design thinking: empathize, define, ideate, prototype, test","UX fundamentals: usability, accessibility, user flows","Figma basics: frames, shapes, components, auto layout","Typography & color theory: visual design principles","User research basics: interviews, surveys, observation"],
+        courses:["Google UX Design Certificate - Coursera, audit free","Figma for Beginners (Figma YouTube) - free","Nielsen Norman Group articles - free, industry-standard UX","UX Collective on Medium - free articles and case studies"],
+        projects:["Redesign an app you think has bad UX and document why","Create 3 wireframes for a simple app idea in Figma","Interview 3 people about a daily problem and document findings"],
+        milestones:[["Month 1","Explain design thinking and its 5 stages"],["Month 2","Build a wireframe for a 3-screen mobile app"],["Month 3","Complete Google UX Certificate Course 1 and 2"]]
+      },
+      { title:"Research & Prototyping", months:"Months 4 to 6",
+        skills:["User research methods: usability testing, card sorting, A/B tests","Information architecture: sitemaps, navigation, hierarchy","High-fidelity prototyping: interactive Figma prototypes","Design systems: components, variants, tokens","Accessibility (WCAG): designing for all users"],
+        courses:["Google UX Design Certificate continued - Coursera","Figma Component Libraries tutorial - free on YouTube","Maze.design tutorials - free user testing platform","A11y Project - free accessibility learning resource"],
+        projects:["Run a usability test on someone else's app with 3 participants","Build an interactive prototype with 5+ screens","Create your first design system component library in Figma"],
+        milestones:[["Month 4","Conduct and document a usability test"],["Month 5","Build a high-fidelity Figma prototype"],["Month 6","Create a reusable component library"]]
+      },
+      { title:"Product Thinking & Strategy", months:"Months 7 to 9",
+        skills:["Product management basics: roadmaps, PRDs, user stories","Metrics & analytics: DAU, retention, conversion funnels","Prioritization frameworks: RICE, MoSCoW, impact vs effort","Stakeholder communication: presenting design decisions","Agile & Scrum basics: sprints, standups, retrospectives"],
+        courses:["Reforge Product Management Fundamentals - free articles","Lenny's Newsletter - free, top product thinking content","Product School free resources - templates and guides","Atlassian Agile Coach - free online learning"],
+        projects:["Write a Product Requirements Document (PRD) for an app feature","Create a product roadmap for a 3-month project","Present a design to a non-designer and incorporate their feedback"],
+        milestones:[["Month 7","Write your first complete PRD"],["Month 8","Build a product roadmap with RICE scoring"],["Month 9","Present a full design case study end-to-end"]]
+      },
+      { title:"Job Readiness", months:"Months 10 to 12",
+        skills:["Portfolio case studies: problem, process, solution, outcome","Design interview prep: product critique, design challenges","PM interview prep: estimation, product sense, execution","Personal brand: Behance, Dribbble, LinkedIn presence","Networking: ADPList mentors, Designer Hangout community"],
+        courses:["UX Portfolio Masterclass (YouTube) - free","Cracking the PM Interview (book) - Gayle McDowell","Dribbble free account - publish and get feedback","ADPList.org - free mentorship from senior designers and PMs"],
+        projects:["3 full case studies on your portfolio website","Redesign a real product feature as a job application project","Contribute a design critique to a design community"],
+        milestones:[["Month 10","Portfolio with 3 case studies live online"],["Month 11","Start applying to junior UX and APM roles"],["Month 12","Complete 5 mock design critique interviews"]]
+      }
+    ]
+  },
+  { name:"Emerging Tech", icon:"🚀", color:"#f59e0b",
+    tagline:"Work at the frontier of technology still being defined. Web3, AR/VR, and AI systems.",
+    aptitude:"Comfort with ambiguity, early adoption mindset, cross-disciplinary curiosity.",
+    careers:["Blockchain/Web3 Engineer","Robotics Engineer","AR/VR Developer","AI Systems Designer"],
+    firstStep:"Spend this week reading about all three tracks (Web3, AR/VR, AI Systems). Then <strong>pick one and write it down</strong>. Commit publicly. Tell your mentor and your group chat.",
+    phases:[
+      { title:"Foundations & Track Selection", months:"Months 1 to 3",
+        skills:["Pick your track: Web3, AR/VR, or AI Systems (commit to one)","Python or JavaScript basics: required for all three tracks","Git & GitHub: version control and open source participation","Track overview: read whitepapers, follow leaders in your area","Community: join Discord servers and forums for your track"],
+        courses:["freeCodeCamp or CS50 - free programming foundations","Web3: Ethereum.org Learn - free official content","AR/VR: Unity Learn - free official Unity tutorials","AI Systems: Prompt Engineering Guide - free, promptingguide.ai"],
+        projects:["Pick your track and write a 1-page plan for your next 9 months","Build one tiny project in your track to test if you enjoy it","Join one community and introduce yourself"],
+        milestones:[["Month 1","Track selected and committed in writing"],["Month 2","Programming foundations complete"],["Month 3","First small project in your chosen track built"]]
+      },
+      { title:"Core Track Skills", months:"Months 4 to 6",
+        skills:["Web3 track: Solidity, smart contracts, Hardhat, EVM","AR/VR track: Unity or Unreal, C#, 3D concepts, XR interactions","AI Systems track: prompt engineering, LangChain, API integrations","All tracks: version control for your specific toolchain","All tracks: read and understand open source projects in your area"],
+        courses:["Web3: CryptoZombies - free Solidity course, gamified","AR/VR: Unity Junior Programmer Pathway - free","AI Systems: LangChain documentation - free with tutorials","All: Build alongside YouTube tutorials in your track"],
+        projects:["Web3: Deploy a simple ERC-20 token on a testnet","AR/VR: Build a simple interactive 3D scene with user input","AI Systems: Build a chatbot powered by an LLM API"],
+        milestones:[["Month 4","Core toolchain installed and working"],["Month 5","First functional project in your track deployed"],["Month 6","Understand 3 key concepts unique to your track"]]
+      },
+      { title:"Build & Contribute", months:"Months 7 to 9",
+        skills:["Web3: DeFi protocols, NFT standards, security auditing basics","AR/VR: spatial UI design, performance optimization, AR Foundation","AI Systems: RAG pipelines, agent frameworks, evaluation","All tracks: documentation and open source contribution","All tracks: writing and communicating what you build"],
+        courses:["Web3: Alchemy University - free, Ethereum developer program","AR/VR: Meta Spark or 8th Wall tutorials - free platforms","AI Systems: DeepLearning.ai short courses - free","All: Write about what you build on Hashnode or Dev.to"],
+        projects:["Web3: Build a full dApp with wallet connection and smart contracts","AR/VR: Build an AR experience that works on a mobile device","AI Systems: Build an AI agent that completes multi-step tasks"],
+        milestones:[["Month 7","Project deployed and accessible to others"],["Month 8","Write and publish one technical article"],["Month 9","Make one open source contribution in your track"]]
+      },
+      { title:"Job Readiness", months:"Months 10 to 12",
+        skills:["Portfolio: 3 projects showcasing your specific track expertise","Community presence: active contributor, known in your community","Emerging tech interviews: system design questions for your track","Freelance or bounties: Gitcoin (Web3), Upwork, direct clients","Keep building: the field moves fast, stay current"],
+        courses:["Build in public on Twitter/X - document your journey","Your track's job boards: Web3.career, Wellfound, LinkedIn","ETHGlobal hackathons: Web3 specific, prizes and visibility"],
+        projects:["Capstone: your most ambitious project yet, fully documented","Present your work at a virtual or local meetup","Participate in one hackathon in your track"],
+        milestones:[["Month 10","Portfolio with 3 track-specific projects live"],["Month 11","Start applying and engaging with companies in your track"],["Month 12","Participate in one hackathon or competition"]]
+      }
+    ]
+  },
+  { name:"Virtual Assistant", icon:"🗂️", color:"#10b981",
+    tagline:"Support and organize businesses and executives remotely. The fastest entry into tech.",
+    aptitude:"Organization, communication, attention to detail, managing multiple tasks.",
+    careers:["General VA","Technical VA","Social Media VA","Executive VA","AI-Powered VA"],
+    firstStep:"Create a free <strong>Notion account</strong> at notion.so today. Watch the beginner tutorial on their YouTube channel (under 30 minutes) and set up a workspace you will use every day.",
+    phases:[
+      { title:"Foundations", months:"Months 1 to 3",
+        skills:["Google Workspace: Gmail, Docs, Sheets, Calendar, Drive","Microsoft Office basics: Word, Excel, Outlook","Communication skills: professional email, Slack etiquette","Notion basics: databases, pages, task management","Time management: managing your time and others' schedules"],
+        courses:["Google Workspace Learning Center - free official tutorials","Notion for Beginners (YouTube) - free, multiple creators","HubSpot Email Marketing Certification - free","Microsoft 365 Training (support.microsoft.com) - free"],
+        projects:["Set up a personal Notion workspace that you use daily","Write 5 professional email templates for common scenarios","Organize a mock Google Drive folder structure for a small business"],
+        milestones:[["Month 1","Comfortable in Google Workspace and Notion daily"],["Month 2","Write professional emails without second-guessing"],["Month 3","Build a complete Notion dashboard for task management"]]
+      },
+      { title:"VA Toolkit & Specialization", months:"Months 4 to 6",
+        skills:["Canva: graphics for social media, presentations, documents","Social media management: Buffer, Hootsuite, scheduling","Project management tools: Asana, Trello, Monday.com","CRM basics: HubSpot CRM free tier, contact management","Video conferencing: Zoom, Google Meet, scheduling and hosting"],
+        courses:["Canva Design School - free official courses","HubSpot CRM Certification - free","Asana Academy - free official training","Buffer Blog tutorials - free social media management content"],
+        projects:["Create a full social media content calendar for a fictional brand","Set up a HubSpot CRM with 10 fictional contacts and a pipeline","Build a project tracker in Asana or Trello for a 3-month project"],
+        milestones:[["Month 4","Design 10 social media graphics in Canva"],["Month 5","Earn HubSpot CRM certification"],["Month 6","Manage a complete mock project in Asana or Trello"]]
+      },
+      { title:"AI Tools & Client Work", months:"Months 7 to 9",
+        skills:["AI tools for VA work: ChatGPT, Claude, Gemini for productivity","Automation: Zapier or Make (no-code automation)","Content writing basics: blog posts, captions, newsletters","Research skills: gathering, verifying, organizing information","Client communication: onboarding, updates, boundaries"],
+        courses:["Zapier University - free automation training","Copy.ai and Jasper tutorials - free AI writing basics","The Futur on YouTube - free freelance and client management","Gina Horkey VA course - affordable, VA-specific training"],
+        projects:["Build a Zapier automation connecting 3 tools (Gmail, Sheets, Slack)","Write a 500-word blog post using AI tools, edited by you","Create a client onboarding packet: welcome email and process doc"],
+        milestones:[["Month 7","Build and deploy one working Zapier automation"],["Month 8","Land first paying client (Fiverr, referral, or direct)"],["Month 9","Complete first project and get a written testimonial"]]
+      },
+      { title:"Growth & Job Readiness", months:"Months 10 to 12",
+        skills:["Executive VA skills: travel booking, inbox zero, decision support","Invoicing & contracts: Wave, HelloSign, basic freelance admin","Specialization: pick one (Tech VA, Social Media VA, Executive VA)","Portfolio: case studies showing real results for clients","Rates & positioning: how to price and present your services"],
+        courses:["Fiverr Learn - free courses on freelancing","Wave invoicing tutorials - free, simple accounting","VA Networking community on Facebook - free group","Online Jobs PH or Upwork beginner guides - free"],
+        projects:["Create a professional services page listing your specialization","Write 2 client case studies documenting problems solved and results","Reach out to 5 small businesses with a personalized pitch"],
+        milestones:[["Month 10","Have 2 paying clients or a full-time VA role"],["Month 11","Specialize and update your profile and portfolio"],["Month 12","Earn consistent monthly income from VA work"]]
+      }
+    ]
+  }
+];
+
+// ─────────────────────────────────────────
+// CONFIG — paste your Apps Script URL here
+// ─────────────────────────────────────────
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxL1urHSInOY9mZgqh8A4K07GBHJCvZUgWZ1_GSfCYxqwI3Xi6nksoD-hVKT59dzQjEvw/exec';
+
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let currentQ = 0;
+let answers = new Array(questions.length).fill(null);
+let lastScores = null;
+let currentRoadmapDomain = 0;
+let menteeName = '';
+let menteeEmail = '';
+let menteeGoal = '';
+
+// ─────────────────────────────────────────
+// SCREEN MANAGEMENT
+// ─────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function updateNav(active) {
+  document.getElementById('navQuiz').classList.toggle('active', active === 'quiz');
+  document.getElementById('navRoadmaps').classList.toggle('active', active === 'roadmaps');
+}
+
+function goHome() {
+  showScreen('screenIntro');
+  updateNav('quiz');
+}
+
+function goIntake() {
+  showScreen('screenIntake');
+  updateNav('quiz');
+  setTimeout(() => document.getElementById('inputName').focus(), 200);
+}
+
+function submitIntake() {
+  const name = document.getElementById('inputName').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
+  if (!name) { document.getElementById('inputName').focus(); return; }
+  if (!email || !email.includes('@')) { document.getElementById('inputEmail').focus(); return; }
+  menteeName = name;
+  menteeEmail = email;
+  showScreen('screenGoals');
+  updateNav('quiz');
+  setTimeout(() => document.getElementById('inputGoal').focus(), 200);
+}
+
+function updateCharCount() {
+  const val = document.getElementById('inputGoal').value;
+  const cc = document.getElementById('charCount');
+  cc.textContent = val.length + ' / 800';
+  cc.classList.toggle('ok', val.length >= 40);
+}
+
+function submitGoal() {
+  const goal = document.getElementById('inputGoal').value.trim();
+  if (goal.length < 20) {
+    document.getElementById('inputGoal').focus();
+    document.getElementById('inputGoal').style.borderColor = '#ef4444';
+    setTimeout(() => document.getElementById('inputGoal').style.borderColor = '', 1500);
+    return;
+  }
+  menteeGoal = goal;
+  startQuiz();
+}
+
+function goRoadmaps(domainIndex) {
+  buildRoadmapScreen(domainIndex >= 0 ? domainIndex : 0);
+  showScreen('screenRoadmap');
+  updateNav('roadmaps');
+}
+
+// ─────────────────────────────────────────
+// INTRO SCREEN SETUP
+// ─────────────────────────────────────────
+function buildIntro() {
+  const preview = document.getElementById('domainsPreview');
+  preview.innerHTML = domains.map((d, i) => `
+    <div class="domain-preview-card" onclick="goRoadmaps(${i})" style="border-top: 3px solid ${d.color}">
+      <div class="domain-preview-icon">${d.icon}</div>
+      <div class="domain-preview-name">${d.name}</div>
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────────
+// QUIZ
+// ─────────────────────────────────────────
+function startQuiz() {
+  currentQ = 0;
+  answers = new Array(questions.length).fill(null);
+  showScreen('screenQuiz');
+  updateNav('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const isMulti = !!q.multi;
+  const card = document.getElementById('questionCard');
+  card.classList.remove('visible');
+  setTimeout(() => {
+    document.getElementById('questionNum').textContent = 'Question ' + (currentQ + 1);
+    document.getElementById('questionText').textContent = q.text;
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    const currentAns = answers[currentQ];
+    q.options.forEach((opt, i) => {
+      const isSelected = isMulti
+        ? (Array.isArray(currentAns) && currentAns.includes(i))
+        : currentAns === i;
+      const btn = document.createElement('button');
+      btn.className = 'option' + (isMulti ? ' multi' : '') + (isSelected ? ' selected' : '');
+      btn.innerHTML = '<span class="option-dot"></span>' + opt.text;
+      btn.onclick = () => selectOption(i);
+      container.appendChild(btn);
+    });
+    const pct = (currentQ / questions.length) * 100;
+    document.getElementById('progressFill').style.width = Math.max(pct, 2) + '%';
+    document.getElementById('progressCount').textContent = (currentQ + 1) + ' of ' + questions.length;
+    document.getElementById('backBtn').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+    const nBtn = document.getElementById('nextBtn');
+    const hasAns = isMulti
+      ? (Array.isArray(currentAns) && currentAns.length > 0)
+      : currentAns !== null;
+    nBtn.disabled = !hasAns;
+    nBtn.textContent = currentQ === questions.length - 1 ? 'See My Results →' : 'Next →';
+    card.classList.add('visible');
+  }, 140);
+}
+
+function selectOption(index) {
+  const q = questions[currentQ];
+  const isMulti = !!q.multi;
+  if (isMulti) {
+    if (!Array.isArray(answers[currentQ])) answers[currentQ] = [];
+    const arr = answers[currentQ];
+    const pos = arr.indexOf(index);
+    if (pos === -1) arr.push(index); else arr.splice(pos, 1);
+    document.querySelectorAll('.option').forEach((el, i) => el.classList.toggle('selected', arr.includes(i)));
+    document.getElementById('nextBtn').disabled = arr.length === 0;
+  } else {
+    answers[currentQ] = index;
+    document.querySelectorAll('.option').forEach((el, i) => el.classList.toggle('selected', i === index));
+    document.getElementById('nextBtn').disabled = false;
+  }
+}
+
+function nextQuestion() {
+  const q = questions[currentQ];
+  const hasAns = q.multi
+    ? (Array.isArray(answers[currentQ]) && answers[currentQ].length > 0)
+    : answers[currentQ] !== null;
+  if (!hasAns) return;
+  if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); }
+  else showResults();
+}
+
+function prevQuestion() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+
+// ─────────────────────────────────────────
+// GOOGLE SHEETS SUBMISSION
+// ─────────────────────────────────────────
+function submitToSheet(scores, ranked, analysis) {
+  if (!SHEET_URL || SHEET_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+  const payload = {
+    name: menteeName,
+    email: menteeEmail,
+    goal: menteeGoal || '',
+    topMatch: ranked[0].name,
+    secondMatch: ranked[1].name,
+    goalDomain: analysis ? analysis.goalDomain : '',
+    alignmentStatus: analysis ? analysis.alignmentStatus : '',
+    mentorNote: analysis ? analysis.mentorNote : '',
+    scores: domains.map((d, i) => `${d.name}: ${scores[i]}`).join(' | '),
+    date: new Date().toLocaleString()
+  };
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+
+function restartQuiz() {
+  currentQ = 0;
+  answers = new Array(questions.length).fill(null);
+  menteeName = '';
+  menteeEmail = '';
+  menteeGoal = '';
+  document.getElementById('aiAnalysisWrap').style.display = 'none';
+  showScreen('screenIntro');
+  updateNav('quiz');
+}
+
+// ─────────────────────────────────────────
+// RESULTS
+// ─────────────────────────────────────────
+function showResults() {
+  const scores = new Array(domains.length).fill(0);
+  answers.forEach((ans, qi) => {
+    if (ans === null || ans === undefined) return;
+    const indices = Array.isArray(ans) ? ans : [ans];
+    indices.forEach(ai => {
+      if (questions[qi].options[ai]) {
+        questions[qi].options[ai].scores.forEach((s, i) => { scores[i] += s; });
+      }
+    });
+  });
+  lastScores = scores;
+  const maxScore = Math.max(...scores);
+  const ranked = domains.map((d, i) => ({ ...d, score: scores[i], index: i })).sort((a, b) => b.score - a.score);
+  const top = ranked[0];
+  const second = ranked[1];
+
+  submitToSheet(scores, ranked);
+
+  document.documentElement.style.setProperty('--domain-color', top.color);
+  document.getElementById('resultsEmoji').textContent = top.icon;
+  document.getElementById('topMatchCard').innerHTML = buildMatchCard(top, maxScore, true);
+  document.getElementById('secondMatchCard').innerHTML = buildMatchCard(second, maxScore, false);
+
+  document.getElementById('allScoresContent').innerHTML = ranked.map(d => {
+    const pct = maxScore > 0 ? (d.score / maxScore) * 100 : 0;
+    return `<div class="score-row" onclick="goRoadmaps(${d.index})">
+      <div class="score-row-name">${d.icon} ${d.name}</div>
+      <div class="score-row-bar"><div class="score-row-fill" data-w="${pct}" style="width:0%;background:${d.color}"></div></div>
+      <div class="score-row-num">${d.score}</div>
+    </div>`;
+  }).join('');
+
+  // Show AI goal analysis if a goal was entered
+  if (menteeGoal) {
+    const wrap = document.getElementById('aiAnalysisWrap');
+    wrap.style.display = 'block';
+    wrap.innerHTML = `<div class="ai-loading"><div class="ai-spinner"></div><div class="ai-loading-text">Analysing your goal against your assessment results...</div></div>`;
+    runGoalAnalysis(scores, ranked, top, second);
+  }
+
+  showScreen('screenResults');
+  updateNav('quiz');
+
+  setTimeout(() => {
+    document.querySelectorAll('[data-w]').forEach(el => { el.style.width = el.getAttribute('data-w') + '%'; });
+    document.querySelectorAll('[data-width]').forEach(el => { el.style.width = el.getAttribute('data-width'); });
+  }, 200);
+}
+
+// ─────────────────────────────────────────
+// AI GOAL ANALYSIS
+// ─────────────────────────────────────────
+async function runGoalAnalysis(scores, ranked, top, second) {
+  const scoresSummary = domains.map((d, i) => `${d.name}: ${scores[i]}`).join(', ');
+  const prompt = `You are a tech career advisor reviewing a mentee's profile.
+
+MENTEE'S STATED GOAL (in their own words):
+"${menteeGoal}"
+
+ASSESSMENT RESULTS (based on 18 aptitude and personality questions):
+Top aptitude match: ${top.name}
+Second aptitude match: ${second.name}
+All domain scores: ${scoresSummary}
+
+The 8 possible domains are: AI & Machine Learning, Data, Software Engineering, Cloud & Infrastructure, Security, Product & Design, Emerging Tech, Virtual Assistant.
+
+Your job: Analyse whether the mentee's stated goal aligns with their aptitude assessment results.
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "goalDomain": "the domain name their stated goal maps to most closely",
+  "alignmentStatus": "match" or "conflict" or "partial",
+  "alignmentSummary": "2 sentences max. Plain language. What their goal maps to and whether it aligns with their aptitude.",
+  "warningText": "Only if conflict or partial: 2-3 sentences explaining the specific gap between what they want and what they are naturally suited for. Be honest but encouraging. Empty string if match.",
+  "mentorNote": "1-2 sentences written for the mentor (not the mentee) flagging what to discuss in the first 1-on-1. Be specific.",
+  "choiceContext": "1 sentence helping the mentee understand what choosing their stated goal path vs their aptitude path means practically."
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const analysis = JSON.parse(clean);
+    renderGoalAnalysis(analysis, top, second);
+  } catch (e) {
+    document.getElementById('aiAnalysisWrap').style.display = 'none';
+  }
+}
+
+function renderGoalAnalysis(a, top, second) {
+  const isConflict = a.alignmentStatus === 'conflict' || a.alignmentStatus === 'partial';
+  const goalDomainObj = domains.find(d => d.name === a.goalDomain) || top;
+  const wrap = document.getElementById('aiAnalysisWrap');
+
+  let html = '';
+
+  // What they said they want
+  html += `<div class="goal-stated">
+    <div class="goal-stated-label">What you said you want</div>
+    <div class="goal-stated-text">"${menteeGoal}"</div>
+  </div>`;
+
+  // Alignment status
+  if (!isConflict) {
+    html += `<div class="align-match">
+      <div class="align-label">✓ Goal and Aptitude Align</div>
+      <div class="align-text">${a.alignmentSummary}</div>
+    </div>`;
+  } else {
+    // 1. Clear warning to the mentee
+    html += `<div class="align-conflict">
+      <div class="align-label">⚠ Goal and Aptitude Do Not Fully Match</div>
+      <div class="align-text">${a.alignmentSummary}</div>
+    </div>`;
+
+    // 2. Warning box explaining the gap
+    if (a.warningText) {
+      html += `<div class="conflict-warning">
+        <div class="conflict-warning-label">Understanding the Gap</div>
+        <div class="conflict-warning-text">${a.warningText}</div>
+      </div>`;
+    }
+
+    // 3. Both roadmap options
+    html += `<div class="dual-roadmap">
+      <div class="dual-roadmap-label">Choose Your Path</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6;">${a.choiceContext}</div>
+      <div class="dual-roadmap-btns">
+        <button class="btn-dual" style="background:${goalDomainObj.color};color:white" onclick="goRoadmaps(${goalDomainObj.index})">
+          ${goalDomainObj.icon} Follow My Goal
+          <small>${goalDomainObj.name}</small>
+        </button>
+        <button class="btn-dual" style="background:${top.color};color:white" onclick="goRoadmaps(${top.index})">
+          ${top.icon} Follow My Aptitude
+          <small>${top.name}</small>
+        </button>
+      </div>
+    </div>`;
+
+    // 4. Mentor flag
+    html += `<div class="mentor-flag">
+      <div class="mentor-flag-label">🚩 Mentor Note</div>
+      <div class="mentor-flag-text">${a.mentorNote}</div>
+    </div>`;
+  }
+
+  wrap.innerHTML = html;
+  // Update sheet with goal analysis
+  submitToSheet(lastScores, domains.map((d,i) => ({...d, score: lastScores[i], index: i})).sort((a,b) => b.score - a.score), a);
+}
+
+function buildMatchCard(d, maxScore, isTop) {
+  const pct = maxScore > 0 ? Math.round((d.score / maxScore) * 100) : 0;
+  return `
+    <div class="match-rank">${isTop ? '★ Top Match' : '○ Secondary Match'}</div>
+    <div class="match-header">
+      <div class="match-icon">${d.icon}</div>
+      <div class="match-title">${d.name}</div>
+    </div>
+    ${isTop ? `<div class="match-bar-wrap">
+      <div class="match-bar-label">Match strength: ${pct}%</div>
+      <div class="match-bar"><div class="match-bar-fill" data-width="${pct}%" style="width:0%"></div></div>
+    </div>` : ''}
+    <div class="match-desc">${d.tagline}</div>
+    <div class="match-aptitude">
+      <div class="match-aptitude-label">Natural Aptitude Needed</div>
+      <div class="match-aptitude-text">${d.aptitude}</div>
+    </div>
+    <div class="match-careers">${d.careers.map(c => `<span class="career-tag">${c}</span>`).join('')}</div>
+    ${isTop ? `<button class="btn-roadmap" style="background:${d.color}" onclick="goRoadmaps(${d.index})">View Your 12-Month Roadmap →</button>` : `<button class="btn-roadmap" style="background:rgba(255,255,255,0.07);color:var(--text);border:1px solid var(--border)" onclick="goRoadmaps(${d.index})">View Roadmap →</button>`}`;
+}
+
+// ─────────────────────────────────────────
+// ROADMAP
+// ─────────────────────────────────────────
+function buildRoadmapScreen(domainIndex) {
+  currentRoadmapDomain = domainIndex;
+
+  // sidebar
+  document.getElementById('roadmapSidebar').innerHTML = `
+    <div class="sidebar-label">All Domains</div>
+    ${domains.map((d, i) => `
+      <button class="domain-nav-btn${i === domainIndex ? ' active' : ''}" onclick="switchRoadmapDomain(${i})" id="dnav-${i}">
+        <span class="domain-nav-dot" style="background:${d.color}"></span>${d.name}
+      </button>`).join('')}
+    ${lastScores ? `<div style="margin-top:20px;padding:0 8px">
+      <div class="sidebar-label" style="margin-top:0">Your Top Match</div>
+      <div style="font-size:12px;color:${domains[getTopDomainIndex()].color};padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:6px;cursor:pointer" onclick="switchRoadmapDomain(${getTopDomainIndex()})">
+        ${domains[getTopDomainIndex()].icon} ${domains[getTopDomainIndex()].name}
+      </div>
+    </div>` : ''}`;
+
+  // main content
+  const d = domains[domainIndex];
+  document.documentElement.style.setProperty('--domain-color', d.color);
+
+  const phasesHTML = d.phases.map((p, pi) => `
+    <div class="phase-card-rm${pi === 0 ? ' open' : ''}" id="prm-${pi}" onclick="togglePhaseRm(${pi})">
+      <div class="phase-header-rm">
+        <div class="phase-left-rm">
+          <span class="phase-num-rm" style="color:${d.color}">Phase ${pi+1}</span>
+          <div>
+            <div class="phase-title-rm">${p.title}</div>
+            <div class="phase-months-rm">${p.months}</div>
+          </div>
+        </div>
+        <span class="phase-chevron-rm">▾</span>
+      </div>
+      <div class="phase-body-rm">
+        <div class="phase-grid-rm">
+          <div class="content-block-rm">
+            <div class="cb-title">Skills to Build</div>
+            <ul class="cb-list">${p.skills.map(s => `<li>${s}</li>`).join('')}</ul>
+          </div>
+          <div class="content-block-rm">
+            <div class="cb-title">Courses & Resources</div>
+            <ul class="cb-list">${p.courses.map(s => `<li>${s}</li>`).join('')}</ul>
+          </div>
+          <div class="content-block-rm">
+            <div class="cb-title">Projects to Build</div>
+            <ul class="cb-list">${p.projects.map(s => `<li>${s}</li>`).join('')}</ul>
+          </div>
+          <div class="content-block-rm">
+            <div class="cb-title">Monthly Milestones</div>
+            <div class="milestone-grid-rm">
+              ${p.milestones.map(m => `
+                <div class="milestone-card-rm">
+                  <div class="milestone-month-rm" style="color:${d.color}">${m[0]}</div>
+                  <div class="milestone-text-rm">${m[1]}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('roadmapMain').innerHTML = `
+    ${lastScores ? `<div class="back-to-results" onclick="showResults()">← Back to my results</div>` : ''}
+    <div class="domain-header-rm">
+      <div class="domain-badge-rm">
+        <span class="domain-badge-icon-rm">${d.icon}</span>
+        <span class="domain-badge-name-rm" style="color:${d.color}">${d.name}</span>
+      </div>
+      <h2>12-Month ${d.name} Roadmap</h2>
+      <div class="domain-tagline-rm">${d.tagline}</div>
+      <div class="domain-stats-rm">
+        <div class="domain-stat-rm"><span class="domain-stat-num-rm" style="color:${d.color}">12 mo</span><div class="domain-stat-label-rm">Duration</div></div>
+        <div class="domain-stat-rm"><span class="domain-stat-num-rm" style="color:${d.color}">4</span><div class="domain-stat-label-rm">Phases</div></div>
+        <div class="domain-stat-rm"><span class="domain-stat-num-rm" style="color:${d.color}">${d.careers.length}</span><div class="domain-stat-label-rm">Career Paths</div></div>
+      </div>
+    </div>
+    <div class="section-divider">Learning Phases</div>
+    <div class="phases-rm">${phasesHTML}</div>
+    <div class="first-step-rm" style="border-left-color:${d.color}">
+      <div class="first-step-label-rm" style="color:${d.color}">Your First Step This Week</div>
+      <div class="first-step-text-rm">${d.firstStep}</div>
+    </div>`;
+}
+
+function switchRoadmapDomain(index) {
+  document.querySelectorAll('.domain-nav-btn').forEach((b, i) => b.classList.toggle('active', i === index));
+  buildRoadmapScreen(index);
+  document.getElementById('roadmapMain').scrollTop = 0;
+}
+
+function togglePhaseRm(index) {
+  document.getElementById('prm-' + index).classList.toggle('open');
+}
+
+function getTopDomainIndex() {
+  if (!lastScores) return 0;
+  return lastScores.indexOf(Math.max(...lastScores));
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+buildIntro();
+</script>
+</body>
+</html>
