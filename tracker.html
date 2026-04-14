@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Learning Tracker | MLOps Mentorship</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070e;
+  --surface: #0d0d18;
+  --card: #121220;
+  --card2: #181828;
+  --border: rgba(255,255,255,0.07);
+  --text: #eeeef4;
+  --muted: #6060a0;
+  --accent: #ff6b2b;
+  --accent2: #00d4aa;
+  --purple: #8b5cf6;
+  --radius: 13px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(255,107,43,0.05) 0%,transparent 70%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;bottom:-200px;left:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,212,170,0.04) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+/* NAV */
+.navbar{position:sticky;top:0;z-index:200;background:rgba(7,7,14,0.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.02em;}
+.nav-brand span{color:var(--accent);}
+.nav-links{display:flex;gap:8px;align-items:center;}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.nav-btn:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.nav-btn.active{background:rgba(255,107,43,0.1);border-color:rgba(255,107,43,0.3);color:var(--accent);}
+.nav-user{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--accent2);}
+
+/* SCREENS */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* CONTAINER */
+.container{max-width:780px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1;}
+.container-wide{max-width:1100px;margin:0 auto;padding:40px 28px 80px;position:relative;z-index:1;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+
+/* TAGS */
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 12px;border-radius:100px;margin-bottom:18px;}
+.tag-orange{background:rgba(255,107,43,0.1);color:var(--accent);border:1px solid rgba(255,107,43,0.2);}
+.tag-green{background:rgba(0,212,170,0.1);color:var(--accent2);border:1px solid rgba(0,212,170,0.2);}
+.tag-purple{background:rgba(139,92,246,0.1);color:var(--purple);border:1px solid rgba(139,92,246,0.2);}
+
+/* HEADINGS */
+.h1{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-0.02em;line-height:1.1;margin-bottom:12px;}
+.h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:10px;}
+.h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;}
+.subtitle{color:var(--muted);font-size:15px;line-height:1.65;margin-bottom:28px;}
+
+/* FORMS */
+.form-group{display:flex;flex-direction:column;gap:7px;margin-bottom:18px;}
+.form-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+.form-input{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;width:100%;}
+.form-input:focus{border-color:var(--accent);background:rgba(255,107,43,0.03);}
+.form-input::placeholder{color:var(--muted);}
+.form-textarea{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;width:100%;resize:vertical;min-height:110px;line-height:1.6;}
+.form-textarea:focus{border-color:var(--accent);background:rgba(255,107,43,0.03);}
+.form-textarea::placeholder{color:var(--muted);}
+.form-select{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;width:100%;cursor:pointer;appearance:none;}
+.form-select:focus{border-color:var(--accent);}
+.form-select option{background:#141422;color:var(--text);}
+
+/* BUTTONS */
+.btn{padding:13px 26px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-primary{background:var(--accent);color:white;}
+.btn-primary:hover{background:#ff7d47;transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,107,43,0.3);}
+.btn-secondary{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover{background:rgba(255,255,255,0.1);}
+.btn-purple{background:var(--purple);color:white;}
+.btn-purple:hover{background:#9d6ff7;transform:translateY(-1px);}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;}
+.btn-danger{background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);}
+.btn-danger:hover{background:rgba(239,68,68,0.2);}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;}
+
+/* ALERTS */
+.alert{padding:14px 18px;border-radius:10px;font-size:14px;margin-bottom:16px;line-height:1.5;}
+.alert-success{background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);color:var(--accent2);}
+.alert-error{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#ef4444;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#f59e0b;}
+
+/* WEEK CARD */
+.week-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
+.week-card-header{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background 0.15s;}
+.week-card-header:hover{background:rgba(255,255,255,0.02);}
+.week-card-header.active-week{border-left:3px solid var(--accent);}
+.week-num{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,0.06);margin-right:14px;flex-shrink:0;}
+.week-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.week-subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
+.week-status{flex-shrink:0;font-size:12px;padding:4px 12px;border-radius:100px;}
+.status-done{background:rgba(0,212,170,0.1);color:var(--accent2);border:1px solid rgba(0,212,170,0.2);}
+.status-current{background:rgba(255,107,43,0.1);color:var(--accent);border:1px solid rgba(255,107,43,0.2);}
+.status-locked{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);}
+.week-body{display:none;border-top:1px solid var(--border);padding:22px;}
+.week-card.open .week-body{display:block;}
+
+/* ASSIGNMENT BOX */
+.assignment-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px;}
+.assignment-label{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.assignment-task{font-size:14px;line-height:1.65;color:#c0c0e0;}
+.assignment-task strong{color:var(--text);}
+.resource-list{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+.resource-list li{font-size:13px;color:#a0a0c0;padding-left:14px;position:relative;}
+.resource-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:11px;top:1px;}
+
+/* SUBMISSION FORM */
+.submission-form{background:rgba(255,255,255,0.02);border:1px solid rgba(255,107,43,0.15);border-radius:10px;padding:22px;margin-top:16px;}
+.submission-form-title{font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
+.submitted-view{background:rgba(0,212,170,0.04);border:1px solid rgba(0,212,170,0.15);border-radius:10px;padding:18px;margin-top:16px;}
+.submitted-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;}
+.submitted-field{margin-bottom:12px;}
+.submitted-field-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.submitted-field-value{font-size:14px;color:var(--text);line-height:1.55;}
+.submitted-link{color:var(--accent2);text-decoration:none;font-size:14px;}
+.submitted-link:hover{text-decoration:underline;}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:32px;}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:16px 20px;flex:1;min-width:120px;}
+.stat-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;display:block;}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:3px;}
+
+/* MENTOR DASHBOARD */
+.dash-tabs{display:flex;gap:8px;margin-bottom:28px;}
+.dash-tab{padding:9px 20px;border-radius:9px;border:1px solid var(--border);background:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.dash-tab:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.dash-tab.active{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:var(--purple);}
+.dash-panel{display:none;}
+.dash-panel.active{display:block;}
+
+/* MENTEE TABLE */
+.mentee-table{width:100%;border-collapse:collapse;}
+.mentee-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--border);}
+.mentee-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;vertical-align:top;}
+.mentee-table tr:hover td{background:rgba(255,255,255,0.02);}
+.domain-badge{font-size:11px;padding:3px 10px;border-radius:100px;display:inline-block;white-space:nowrap;}
+.progress-mini{height:4px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden;margin-top:5px;width:80px;}
+.progress-mini-fill{height:100%;border-radius:100px;background:var(--accent2);}
+
+/* SUBMISSION DETAIL */
+.sub-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:12px;}
+.sub-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sub-meta{font-size:12px;color:var(--muted);}
+.sub-body p{font-size:14px;line-height:1.6;color:#c0c0e0;margin-bottom:8px;}
+.sub-body a{color:var(--accent2);font-size:13px;text-decoration:none;}
+.sub-body a:hover{text-decoration:underline;}
+
+/* ACCESS CODE DISPLAY */
+.code-display{background:rgba(139,92,246,0.07);border:1px solid rgba(139,92,246,0.2);border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.code-val{font-family:monospace;font-size:16px;font-weight:700;color:var(--purple);letter-spacing:0.1em;}
+.code-meta{font-size:12px;color:var(--muted);}
+.btn-copy{background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);color:var(--purple);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-copy:hover{background:rgba(139,92,246,0.2);}
+
+/* SPINNER */
+.spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,0.07);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:32px auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-text{font-size:15px;line-height:1.65;}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:28px 0;}
+
+@media(max-width:640px){
+  .container,.container-wide{padding:24px 16px 60px;}
+  .card{padding:22px 18px;}
+  .stats-row{gap:10px;}
+  .dash-tabs{flex-wrap:wrap;}
+  .mentee-table th:nth-child(3),.mentee-table td:nth-child(3){display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">MLOps <span>Tracker</span></div>
+  <div class="nav-links">
+    <a class="nav-btn" href="index.html">← Career Platform</a>
+    <div class="nav-user" id="navUser" style="display:none">
+      <span class="nav-dot"></span>
+      <span id="navUserName"></span>
+    </div>
+    <button class="nav-btn" id="navLogout" onclick="logout()" style="display:none">Logout</button>
+  </div>
+</nav>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div class="screen active" id="screenLogin">
+  <div class="container" style="max-width:480px">
+    <div style="padding-top:48px">
+      <div class="tag tag-orange">Weekly Learning Tracker</div>
+      <div class="h1">Enter your<br>access code</div>
+      <div class="subtitle">Your mentor gave you a unique access code when you joined the program. Enter it below to access your weekly learning dashboard.</div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Access Code</label>
+          <input class="form-input" type="text" id="loginCode" placeholder="e.g. AMARA-2025" style="text-transform:uppercase;letter-spacing:0.1em;font-family:monospace;font-size:16px" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div id="loginError" class="alert alert-error" style="display:none"></div>
+        <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Access My Dashboard →</button>
+        <div style="text-align:center;margin-top:16px">
+          <button class="nav-btn" onclick="showMentorLogin()" style="font-size:12px">Mentor login →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MENTOR LOGIN ══ -->
+<div class="screen" id="screenMentorLogin">
+  <div class="container" style="max-width:480px">
+    <div style="padding-top:48px">
+      <div class="tag tag-purple">Mentor Access</div>
+      <div class="h1">Mentor<br>Dashboard</div>
+      <div class="subtitle">Enter your mentor password to access the full dashboard, manage access codes, and review all mentee submissions.</div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Mentor Password</label>
+          <input class="form-input" type="password" id="mentorPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doMentorLogin()">
+        </div>
+        <div id="mentorError" class="alert alert-error" style="display:none"></div>
+        <button class="btn btn-purple" style="width:100%;margin-bottom:12px" onclick="doMentorLogin()">Enter Dashboard →</button>
+        <button class="btn btn-secondary" style="width:100%" onclick="showScreen('screenLogin')">← Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MENTEE DASHBOARD ══ -->
+<div class="screen" id="screenMentee">
+  <div class="container">
+    <div style="margin-bottom:32px">
+      <div class="tag tag-green" id="menteeTrackTag">Track</div>
+      <div class="h1" id="menteeGreeting">Welcome back</div>
+      <div class="subtitle" id="menteeSubtitle">Here is your weekly learning plan.</div>
+    </div>
+
+    <div class="stats-row" id="menteeStats"></div>
+
+    <div class="h2" style="margin-bottom:18px">Your Weekly Plan</div>
+    <div id="weeksList"></div>
+  </div>
+</div>
+
+<!-- ══ MENTOR DASHBOARD ══ -->
+<div class="screen" id="screenMentor">
+  <div class="container-wide">
+    <div style="margin-bottom:28px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="tag tag-purple">Mentor Dashboard</div>
+        <div class="h1">Program Overview</div>
+      </div>
+      <button class="btn btn-purple" onclick="showAddCode()">+ Add Mentee</button>
+    </div>
+
+    <div class="stats-row" id="mentorStats"></div>
+
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="switchTab('tabMentees')">All Mentees</button>
+      <button class="dash-tab" onclick="switchTab('tabSubmissions')">All Submissions</button>
+      <button class="dash-tab" onclick="switchTab('tabCodes')">Access Codes</button>
+    </div>
+
+    <div class="dash-panel active" id="tabMentees"></div>
+    <div class="dash-panel" id="tabSubmissions"></div>
+    <div class="dash-panel" id="tabCodes"></div>
+  </div>
+</div>
+
+<!-- ══ ADD MENTEE MODAL ══ -->
+<div id="modalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeModal()">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;width:100%;max-width:500px;position:relative" onclick="event.stopPropagation()">
+    <div class="h2" style="margin-bottom:6px">Add New Mentee</div>
+    <div style="color:var(--muted);font-size:14px;margin-bottom:24px">Fill in the mentee's details. An access code will be generated automatically.</div>
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input class="form-input" type="text" id="newName" placeholder="e.g. Amara Johnson">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="newEmail" placeholder="e.g. amara@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Domain Track</label>
+      <select class="form-select" id="newDomain">
+        <option value="">Select a domain track</option>
+        <option>AI & Machine Learning</option>
+        <option>Data</option>
+        <option>Software Engineering</option>
+        <option>Cloud & Infrastructure</option>
+        <option>Security</option>
+        <option>Product & Design</option>
+        <option>Emerging Tech</option>
+        <option>Virtual Assistant</option>
+      </select>
+    </div>
+    <div id="modalError" class="alert alert-error" style="display:none"></div>
+    <div id="newCodeResult" style="display:none">
+      <div class="alert alert-success" style="margin-bottom:16px">Mentee added. Share this access code with them.</div>
+      <div class="code-display">
+        <div>
+          <div class="code-val" id="generatedCode"></div>
+          <div class="code-meta" id="generatedMeta"></div>
+        </div>
+        <button class="btn-copy" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px" id="modalBtns">
+      <button class="btn btn-primary" style="flex:1" onclick="addMentee()">Generate Access Code</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+    <button class="btn btn-secondary" style="width:100%;margin-top:10px;display:none" id="modalDoneBtn" onclick="closeModal();refreshMentorDash()">Done</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────
+// CONFIG — change this password
+// ─────────────────────────────
+const MENTOR_PASSWORD = 'MENTOR2025';
+
+// domain colors
+const DOMAIN_COLORS = {
+  'AI & Machine Learning': '#ff6b2b',
+  'Data': '#3b82f6',
+  'Software Engineering': '#8b5cf6',
+  'Cloud & Infrastructure': '#06b6d4',
+  'Security': '#ef4444',
+  'Product & Design': '#ec4899',
+  'Emerging Tech': '#f59e0b',
+  'Virtual Assistant': '#10b981'
+};
+
+// ─────────────────────────────
+// WEEKLY CURRICULUM (12 weeks per phase × 4 phases = 48 weeks)
+// ─────────────────────────────
+const CURRICULUM = {
+  'AI & Machine Learning': [
+    {week:1,title:'Python Basics',phase:'Phase 1: Foundations',task:'Complete CS50P Week 0 and 1. Write a Python script that reads a CSV file, prints every row, and counts the total number of rows.',resources:['CS50P — cs50.harvard.edu/python','Python docs — docs.python.org','freeCodeCamp Python — youtube.com']},
+    {week:2,title:'Python Functions & Data Structures',phase:'Phase 1: Foundations',task:'Build a Python script that stores student names and scores in a dictionary. Sort them by score and print the top 3. Push it to a new GitHub repo.',resources:['CS50P Week 2 and 3','Real Python — realpython.com','GitHub Hello World guide']},
+    {week:3,title:'Git & GitHub',phase:'Phase 1: Foundations',task:'Create a GitHub profile. Push at least 2 projects. Write a proper README for each one explaining what the project does and how to run it.',resources:['GitHub Learning Lab','The Missing Semester — missing.csail.mit.edu','GitHub Docs — docs.github.com']},
+    {week:4,title:'Math for ML: Statistics',phase:'Phase 1: Foundations',task:'Complete Khan Academy: Statistics and Probability units 1 and 2. Write a Python script that calculates mean, median, and standard deviation from a list of numbers.',resources:['Khan Academy Statistics — khanacademy.org','StatQuest on YouTube','Python statistics module docs']},
+    {week:5,title:'Math for ML: Linear Algebra',phase:'Phase 1: Foundations',task:'Watch 3Blue1Brown Essence of Linear Algebra episodes 1 to 5. Implement matrix multiplication from scratch in Python without NumPy.',resources:['3Blue1Brown — youtube.com','Khan Academy Linear Algebra','MIT OpenCourseWare 18.06']},
+    {week:6,title:'NumPy & Pandas',phase:'Phase 1: Foundations',task:'Load a real CSV dataset from Kaggle into a Pandas DataFrame. Clean it (remove nulls, fix types). Compute and print 5 statistics about it.',resources:['Kaggle Pandas course — kaggle.com','NumPy docs — numpy.org','Real Python Pandas tutorial']},
+    {week:7,title:'Data Visualization',phase:'Phase 1: Foundations',task:'Using the same dataset from last week, create 3 charts: one histogram, one scatter plot, one bar chart. Save them as PNG files and add them to your GitHub repo.',resources:['Matplotlib tutorials — matplotlib.org','Seaborn gallery — seaborn.pydata.org','Kaggle Data Viz course']},
+    {week:8,title:'Linux & Command Line',phase:'Phase 1: Foundations',task:'Complete OverTheWire Bandit levels 0 to 10. Write a bash script that creates 5 folders, puts a text file in each, and then lists all files recursively.',resources:['OverTheWire Bandit — overthewire.org','The Missing Semester — missing.csail.mit.edu','Bash scripting tutorial — linuxcommand.org']},
+    {week:9,title:'ML Concepts: Supervised Learning',phase:'Phase 1: Foundations',task:'Watch Andrew Ng Week 1 lectures on Coursera (audit free). Write a 200-word explanation of supervised learning in your own words. Post it on LinkedIn or your GitHub.',resources:['Andrew Ng ML Specialization — coursera.org','ML Glossary — ml-cheatsheet.readthedocs.io','Google ML Crash Course']},
+    {week:10,title:'First ML Model: Linear Regression',phase:'Phase 1: Foundations',task:'Train a linear regression model using Scikit-learn on the Boston Housing or California Housing dataset. Print the R² score. Push to GitHub.',resources:['Scikit-learn user guide — scikit-learn.org','Kaggle Housing dataset','Andrew Ng Week 2 lectures']},
+    {week:11,title:'Classification Models',phase:'Phase 1: Foundations',task:'Train a logistic regression and a decision tree classifier on the Titanic dataset. Compare their accuracy scores. Document which performed better and why.',resources:['Kaggle Titanic dataset','Scikit-learn Classification docs','StatQuest Decision Trees — YouTube']},
+    {week:12,title:'Model Evaluation',phase:'Phase 1: Foundations',task:'Take any model you built in weeks 10 or 11. Compute accuracy, precision, recall, and F1 score. Plot a confusion matrix. Write a summary of what these metrics mean for your specific problem.',resources:['Scikit-learn metrics docs','Towards Data Science — towardsdatascience.com','Confusion Matrix explained — YouTube']},
+    {week:13,title:'ML Pipelines with Scikit-learn',phase:'Phase 2: ML Fundamentals',task:'Build a full Scikit-learn Pipeline that includes preprocessing (scaling, encoding) and a classifier. Train it on a new dataset and evaluate it.',resources:['Scikit-learn Pipeline docs','Kaggle ML Intermediate course','DataTalks.Club resources']},
+    {week:14,title:'Cross Validation & Hyperparameter Tuning',phase:'Phase 2: ML Fundamentals',task:'Use GridSearchCV or RandomizedSearchCV to tune the hyperparameters of a model from a previous week. Document the best parameters and the improvement in score.',resources:['Scikit-learn model selection','Andrew Ng Week 3 content','Kaggle Intermediate ML course']},
+    {week:15,title:'Feature Engineering',phase:'Phase 2: ML Fundamentals',task:'Take a raw dataset and create at least 3 new features through transformation or combination. Retrain your model and compare performance before and after.',resources:['Feature Engineering for ML — book','Kaggle Feature Engineering course','Towards Data Science articles']},
+    {week:16,title:'Ensemble Methods',phase:'Phase 2: ML Fundamentals',task:'Train a Random Forest and a Gradient Boosting model on the same dataset. Compare performance. Explain what ensemble learning does in a README.',resources:['Scikit-learn Ensemble methods','XGBoost docs — xgboost.readthedocs.io','StatQuest Random Forests — YouTube']},
+    {week:17,title:'Neural Networks Basics',phase:'Phase 2: ML Fundamentals',task:'Build a simple neural network using Scikit-learn MLPClassifier or Keras. Train it on MNIST. Document your architecture decisions.',resources:['Keras Getting Started — keras.io','3Blue1Brown Neural Networks — YouTube','Deep Learning with Python (book)']},
+    {week:18,title:'Kaggle Competition Entry',phase:'Phase 2: ML Fundamentals',task:'Enter the Kaggle Titanic competition if you have not already, or the Housing Prices competition. Submit at least one prediction. Share your notebook publicly.',resources:['Kaggle Competitions — kaggle.com','Kaggle community notebooks','Towards Data Science Kaggle guides']},
+    {week:19,title:'NLP Basics',phase:'Phase 2: ML Fundamentals',task:'Build a simple sentiment analysis model using Scikit-learn and TF-IDF on a movie reviews dataset. Achieve at least 80% accuracy.',resources:['NLTK docs — nltk.org','Scikit-learn Text Feature Extraction','Kaggle IMDB dataset']},
+    {week:20,title:'Model Serialisation',phase:'Phase 2: ML Fundamentals',task:'Train any model and save it using joblib or pickle. Write a Python script that loads the saved model and makes predictions on new data without retraining.',resources:['Scikit-learn model persistence','Python pickle docs','joblib docs — joblib.readthedocs.io']},
+    {week:21,title:'ML Project: End-to-End',phase:'Phase 2: ML Fundamentals',task:'Build one complete end-to-end ML project: ingest raw data, clean it, engineer features, train and evaluate a model, and document everything in a GitHub README.',resources:['Hands-On ML with Scikit-learn (book)','Kaggle datasets','Real Python project tutorials']},
+    {week:22,title:'Intro to MLOps',phase:'Phase 2: ML Fundamentals',task:'Read the DataTalks.Club MLOps Zoomcamp introduction. Set up MLflow locally. Log at least one experiment with parameters, metrics, and an artifact.',resources:['DataTalks.Club MLOps Zoomcamp — github.com/DataTalks-Club','MLflow docs — mlflow.org','MLflow Quickstart tutorial']},
+    {week:23,title:'Experiment Tracking with MLflow',phase:'Phase 2: ML Fundamentals',task:'Run 5 experiments on the same model with different hyperparameters using MLflow tracking. Compare them in the MLflow UI. Screenshot and share in your submission.',resources:['MLflow Tracking docs','DataTalks.Club Week 1 content','MLflow tutorial on YouTube']},
+    {week:24,title:'Docker for ML',phase:'Phase 2: ML Fundamentals',task:'Containerize a trained ML model using Docker. Write a Dockerfile that installs dependencies and runs a prediction script. Build and run the container locally.',resources:['TechWorld with Nana Docker — YouTube','Docker Getting Started — docs.docker.com','DataTalks.Club MLOps Week 2']},
+    {week:25,title:'REST APIs with FastAPI',phase:'Phase 3: MLOps & Deployment',task:'Wrap a saved ML model in a FastAPI endpoint. The endpoint should accept input as JSON and return a prediction. Test it using curl or Postman.',resources:['FastAPI docs — fastapi.tiangolo.com','Real Python FastAPI tutorial','DataTalks.Club MLOps Week 3']},
+    {week:26,title:'Dockerised API',phase:'Phase 3: MLOps & Deployment',task:'Combine last week\'s FastAPI model with Docker. Build an image, run a container, and call the API from your browser or terminal. Push the image to Docker Hub.',resources:['Docker Hub — hub.docker.com','FastAPI + Docker tutorial — testdriven.io','DataTalks.Club Week 4']},
+    {week:27,title:'CI/CD with GitHub Actions',phase:'Phase 3: MLOps & Deployment',task:'Set up a GitHub Actions workflow that automatically runs your model\'s unit tests and builds your Docker image on every push to main.',resources:['GitHub Actions docs','DataTalks.Club Week 5','CI/CD for ML — youtube.com']},
+    {week:28,title:'Cloud Deployment: AWS or GCP',phase:'Phase 3: MLOps & Deployment',task:'Deploy your Dockerised FastAPI model to AWS Elastic Beanstalk or Google Cloud Run (both have free tiers). Share the live endpoint URL in your submission.',resources:['AWS Elastic Beanstalk docs','Google Cloud Run quickstart','Render.com (free alternative)']},
+    {week:29,title:'Model Monitoring',phase:'Phase 3: MLOps & Deployment',task:'Add basic monitoring to your deployed model: log every prediction request with input, output, and timestamp. Set up a simple alert if the model returns errors more than 5 times.',resources:['Evidently AI docs — evidentlyai.com','DataTalks.Club Week 6','Prometheus basics — prometheus.io']},
+    {week:30,title:'Feature Stores',phase:'Phase 3: MLOps & Deployment',task:'Read about feature stores and why they exist. Set up a simple feature store using Feast locally. Register two features and use them to train a model.',resources:['Feast docs — feast.dev','Feature Store Org — featurestore.org','DataTalks.Club Week 7']},
+    {week:31,title:'Data Pipelines for ML',phase:'Phase 3: MLOps & Deployment',task:'Build a simple data pipeline using Python and Airflow (or Prefect) that: fetches data from an API, transforms it, and stores it in a local database daily.',resources:['Apache Airflow docs','Prefect docs — docs.prefect.io','DataTalks.Club Data Engineering Zoomcamp']},
+    {week:32,title:'Model Versioning',phase:'Phase 3: MLOps & Deployment',task:'Use the MLflow Model Registry to register 3 versions of a model (each with different parameters). Promote the best one to Production stage. Document the process.',resources:['MLflow Model Registry docs','DataTalks.Club Week 8','MLflow tutorial — youtube.com']},
+    {week:33,title:'A/B Testing for ML Models',phase:'Phase 3: MLOps & Deployment',task:'Design an A/B test for two versions of your model. Write the code that routes 50% of traffic to model A and 50% to model B, and logs which model served each request.',resources:['A/B Testing for ML — towardsdatascience.com','Optimizely A/B testing guide','DataTalks.Club advanced content']},
+    {week:34,title:'ML System Design',phase:'Phase 3: MLOps & Deployment',task:'Design a complete ML system for a recommendation engine. Draw a diagram showing data ingestion, training pipeline, serving layer, and monitoring. Write a 300-word explanation.',resources:['Designing ML Systems (book) — Chip Huyen','ML System Design primer — github.com','Eugene Yan blog — eugeneyan.com']},
+    {week:35,title:'Capstone: Define Your Project',phase:'Phase 3: MLOps & Deployment',task:'Define your capstone project. Write a project proposal: problem statement, dataset, model approach, deployment plan, and success metrics. Share in your submission.',resources:['Kaggle datasets','UCI ML Repository — archive.ics.uci.edu','Papers With Code — paperswithcode.com']},
+    {week:36,title:'Capstone: Data & Baseline',phase:'Phase 3: MLOps & Deployment',task:'Collect and clean your capstone dataset. Train a baseline model. Log the experiment in MLflow. Document your data cleaning decisions in the README.',resources:['Your chosen dataset','Pandas documentation','MLflow tracking docs']},
+    {week:37,title:'Capstone: Model Development',phase:'Phase 4: Job Readiness',task:'Train your best model for the capstone. Run at least 10 experiments with different approaches. Use the MLflow UI to compare and pick the best.',resources:['Scikit-learn / XGBoost / Keras','MLflow experiment comparison','Towards Data Science for inspiration']},
+    {week:38,title:'Capstone: Deployment',phase:'Phase 4: Job Readiness',task:'Deploy your capstone model. It must be live at a public URL with a working API endpoint. Write a README with clear setup instructions.',resources:['Render.com free tier','FastAPI deployment guide','Docker Hub']},
+    {week:39,title:'Technical Writing',phase:'Phase 4: Job Readiness',task:'Write a full technical blog post about your capstone project. Publish it on Medium or Hashnode. Include the problem, your approach, results, and lessons learned. Share the link.',resources:['Hashnode — hashnode.com','Medium — medium.com','Dev.to — dev.to']},
+    {week:40,title:'GitHub Portfolio Polish',phase:'Phase 4: Job Readiness',task:'Audit all your GitHub repos. Every project must have: a clear README, a live demo link or screenshot, and clean code. Remove empty or incomplete repos.',resources:['GitHub Profile README guide','Awesome README — github.com','GitHub Pages for demos']},
+    {week:41,title:'LinkedIn Profile',phase:'Phase 4: Job Readiness',task:'Update your LinkedIn. Add all projects, the blog post link, and your GitHub. Write a headline that specifically names MLOps or ML Engineer. Connect with 10 people in your field.',resources:['LinkedIn profile guide','10x LinkedIn — newsletter','Open to Work settings on LinkedIn']},
+    {week:42,title:'Resume & CV',phase:'Phase 4: Job Readiness',task:'Write your tech resume. One page. Highlight your capstone project, GitHub, and blog post. Use bullet points starting with action verbs. Share a PDF in your submission.',resources:['Tech resume guide — resumeworded.com','FAANG resume examples','HackerNews: Who is Hiring thread']},
+    {week:43,title:'System Design Interview Prep',phase:'Phase 4: Job Readiness',task:'Study ML system design interview questions. Answer one design question in writing: "Design a recommendation system for an e-commerce platform." Submit your written answer.',resources:['ML System Design Interview — educative.io','Eugene Yan blog','Grokking the ML Interview']},
+    {week:44,title:'Coding Interview Prep',phase:'Phase 4: Job Readiness',task:'Solve 5 LeetCode Easy problems (arrays and strings). Record your solutions with explanations in a GitHub repo. Time yourself — aim for under 20 minutes per problem.',resources:['LeetCode — leetcode.com','NeetCode — neetcode.io','Blind 75 list — teamblind.com']},
+    {week:45,title:'Mock Interview 1',phase:'Phase 4: Job Readiness',task:'Do a mock technical interview with a peer or use Pramp. Focus on one LeetCode problem and one ML concept question. Write a reflection: what went well, what to improve.',resources:['Pramp — pramp.com','Interviewing.io','Peer practice with another mentee']},
+    {week:46,title:'Job Applications Start',phase:'Phase 4: Job Readiness',task:'Apply to at least 5 entry-level ML Engineer, MLOps Engineer, or Data Scientist roles. Customise your cover letter for each one. Track all applications in a spreadsheet.',resources:['LinkedIn Jobs','Wellfound — wellfound.com','Google Jobs','Glassdoor']},
+    {week:47,title:'Mock Interview 2',phase:'Phase 4: Job Readiness',task:'Do a second mock interview focusing specifically on ML system design. Walk someone through your capstone architecture. Record their feedback in your submission.',resources:['Pramp — pramp.com','DataTalks.Club job prep resources','ADPList mentors — adplist.org']},
+    {week:48,title:'Final Review & Next Steps',phase:'Phase 4: Job Readiness',task:'Review your full journey. Write a 12-month retrospective: what you learned, your proudest project, one thing you would do differently, and your plan for the next 6 months.',resources:['Your own GitHub profile','Your blog posts','Career platform roadmap']}
+  ]
+};
+
+// Fill remaining domains with a simplified 48-week structure
+function generateCurriculum(domain) {
+  if (CURRICULUM[domain]) return CURRICULUM[domain];
+  const phases = [
+    {name:'Phase 1: Foundations', weeks:[1,12], tasks:[
+      'Set up your development environment and complete the first beginner tutorial for your track.',
+      'Complete week 2 of foundations coursework. Build a small practice project.',
+      'Practice core concepts by building a mini project without tutorials.',
+      'Complete a guided project from your primary course resource.',
+      'Build something that combines concepts from weeks 1 to 4.',
+      'Review and document everything you have learned so far in a GitHub README.',
+      'Start the core certification or course for your domain.',
+      'Complete a beginner challenge or exercise set in your primary tool.',
+      'Build a portfolio project demonstrating Phase 1 skills.',
+      'Write a blog post or LinkedIn post about what you have learned.',
+      'Do a peer review of someone else\'s work in the same track.',
+      'Phase 1 capstone: submit your best beginner project with full documentation.'
+    ]},
+    {name:'Phase 2: Core Skills', weeks:[13,24], tasks:[
+      'Start Phase 2 core coursework. Set up any new tools required.',
+      'Complete a hands-on exercise from your primary Phase 2 resource.',
+      'Build a project that applies one new Phase 2 concept.',
+      'Deep dive into the most important tool or framework for your domain.',
+      'Complete a timed challenge or set of exercises.',
+      'Peer review: review a project built by someone in your cohort.',
+      'Integrate two or more Phase 2 skills into one project.',
+      'Document your Phase 2 learning with a written summary.',
+      'Build a project that you would be comfortable showing an employer.',
+      'Contribute to an open source project or forum in your domain.',
+      'Write a technical blog post about a Phase 2 concept you found hard.',
+      'Phase 2 capstone: your most complete project yet, deployed and documented.'
+    ]},
+    {name:'Phase 3: Advanced Application', weeks:[25,36], tasks:[
+      'Start Phase 3 coursework. Identify the most advanced skill you need to build.',
+      'Build a project demonstrating an advanced concept from Phase 3.',
+      'Complete a real-world challenge or case study in your domain.',
+      'Set up a production-like environment for your projects.',
+      'Add monitoring, testing, or security to an existing project.',
+      'Collaborate with another mentee on a joint project.',
+      'Complete the main Phase 3 certification or course milestone.',
+      'Refactor and improve your best Phase 2 project using Phase 3 knowledge.',
+      'Build your most ambitious project yet for this domain.',
+      'Document the architecture of your Phase 3 project in detail.',
+      'Seek feedback on your project from your mentor or a peer.',
+      'Phase 3 capstone: a fully deployed, documented, real-world project.'
+    ]},
+    {name:'Phase 4: Job Readiness', weeks:[37,48], tasks:[
+      'Define and start your capstone project. Write a full project proposal.',
+      'Build the core functionality of your capstone project.',
+      'Deploy your capstone project to a live environment.',
+      'Polish your GitHub profile: update all READMEs and add project screenshots.',
+      'Write a technical blog post about your capstone project.',
+      'Update your LinkedIn with all projects and skills.',
+      'Write and finalise your resume or CV.',
+      'Do one mock interview focused on your domain.',
+      'Apply to at least 5 positions in your target domain.',
+      'Do a second mock interview and write a reflection.',
+      'Network: connect with 10 professionals in your domain on LinkedIn.',
+      'Write your 12-month retrospective and plan your next 6 months.'
+    ]}
+  ];
+
+  const weeks = [];
+  phases.forEach(ph => {
+    ph.tasks.forEach((task, i) => {
+      weeks.push({
+        week: ph.weeks[0] + i,
+        title: `Week ${ph.weeks[0] + i} — ${ph.name.split(':')[1].trim()}`,
+        phase: ph.name,
+        task: `${task} Submit your summary, what you built, and a link to your work.`,
+        resources: [`Primary resource for ${domain} track`, 'YouTube tutorials', 'Official documentation']
+      });
+    });
+  });
+  return weeks;
+}
+
+// ─────────────────────────────
+// STATE
+// ─────────────────────────────
+let currentUser = null; // { code, name, email, domain, startDate, isMentor }
+let currentTab = 'tabMentees';
+
+// ─────────────────────────────
+// STORAGE HELPERS
+// ─────────────────────────────
+async function getCodes() {
+  try {
+    const r = await window.storage.get('mentee_codes', true);
+    return r ? JSON.parse(r.value) : {};
+  } catch { return {}; }
+}
+
+async function saveCodes(codes) {
+  await window.storage.set('mentee_codes', JSON.stringify(codes), true);
+}
+
+async function getSubmission(code, week) {
+  try {
+    const r = await window.storage.get(`sub_${code}_w${week}`, true);
+    return r ? JSON.parse(r.value) : null;
+  } catch { return null; }
+}
+
+async function saveSubmission(code, week, data) {
+  await window.storage.set(`sub_${code}_w${week}`, JSON.stringify(data), true);
+}
+
+async function getAllSubmissionsForMentee(code, totalWeeks) {
+  const subs = [];
+  for (let w = 1; w <= totalWeeks; w++) {
+    const s = await getSubmission(code, w);
+    if (s) subs.push({ week: w, ...s });
+  }
+  return subs;
+}
+
+// ─────────────────────────────
+// SCREEN MANAGEMENT
+// ─────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showMentorLogin() {
+  showScreen('screenMentorLogin');
+}
+
+// ─────────────────────────────
+// AUTH
+// ─────────────────────────────
+async function doLogin() {
+  const code = document.getElementById('loginCode').value.trim().toUpperCase();
+  const err = document.getElementById('loginError');
+  if (!code) { showErr(err, 'Please enter your access code.'); return; }
+
+  const codes = await getCodes();
+  if (!codes[code]) { showErr(err, 'Access code not found. Check with your mentor.'); return; }
+
+  currentUser = { ...codes[code], code, isMentor: false };
+  setupNavUser(currentUser.name);
+  await renderMenteeDash();
+  showScreen('screenMentee');
+}
+
+async function doMentorLogin() {
+  const pass = document.getElementById('mentorPass').value;
+  const err = document.getElementById('mentorError');
+  if (pass !== MENTOR_PASSWORD) { showErr(err, 'Incorrect password.'); return; }
+  currentUser = { isMentor: true, name: 'Mentor' };
+  setupNavUser('Mentor');
+  await renderMentorDash();
+  showScreen('screenMentor');
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('navUser').style.display = 'none';
+  document.getElementById('navLogout').style.display = 'none';
+  document.getElementById('loginCode').value = '';
+  document.getElementById('mentorPass').value = '';
+  showScreen('screenLogin');
+}
+
+function setupNavUser(name) {
+  document.getElementById('navUser').style.display = 'flex';
+  document.getElementById('navUserName').textContent = name;
+  document.getElementById('navLogout').style.display = 'block';
+}
+
+function showErr(el, msg) {
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+// ─────────────────────────────
+// MENTEE DASHBOARD
+// ─────────────────────────────
+async function renderMenteeDash() {
+  const u = currentUser;
+  const color = DOMAIN_COLORS[u.domain] || '#ff6b2b';
+  document.getElementById('menteeTrackTag').textContent = u.domain;
+  document.getElementById('menteeTrackTag').style.background = `${color}18`;
+  document.getElementById('menteeTrackTag').style.color = color;
+  document.getElementById('menteeTrackTag').style.borderColor = `${color}40`;
+  document.getElementById('menteeGreeting').textContent = `Welcome back, ${u.name.split(' ')[0]}`;
+  document.getElementById('menteeSubtitle').textContent = `${u.domain} track — here is your weekly learning plan.`;
+
+  const curriculum = generateCurriculum(u.domain);
+  const currentWeek = getCurrentWeek(u.startDate);
+  const totalWeeks = curriculum.length;
+
+  // Count submissions
+  let doneCount = 0;
+  for (let w = 1; w <= totalWeeks; w++) {
+    const s = await getSubmission(u.code, w);
+    if (s) doneCount++;
+  }
+
+  const pct = Math.round((doneCount / totalWeeks) * 100);
+  document.getElementById('menteeStats').innerHTML = `
+    <div class="stat-box"><span class="stat-num" style="color:${color}">${currentWeek}</span><div class="stat-label">Current Week</div></div>
+    <div class="stat-box"><span class="stat-num" style="color:var(--accent2)">${doneCount}</span><div class="stat-label">Weeks Submitted</div></div>
+    <div class="stat-box"><span class="stat-num" style="color:var(--purple)">${totalWeeks - doneCount}</span><div class="stat-label">Remaining</div></div>
+    <div class="stat-box"><span class="stat-num" style="color:#f59e0b">${pct}%</span><div class="stat-label">Completion</div></div>`;
+
+  // Render weeks
+  const list = document.getElementById('weeksList');
+  list.innerHTML = '<div class="spinner"></div>';
+  let html = '';
+  for (let i = 0; i < totalWeeks; i++) {
+    const wk = curriculum[i];
+    const sub = await getSubmission(u.code, wk.week);
+    const isCurrentWeek = wk.week === currentWeek;
+    const isPast = wk.week < currentWeek;
+    const isFuture = wk.week > currentWeek;
+
+    let statusHtml = '';
+    if (sub) statusHtml = `<span class="week-status status-done">✓ Submitted</span>`;
+    else if (isCurrentWeek) statusHtml = `<span class="week-status status-current">This week</span>`;
+    else if (isFuture) statusHtml = `<span class="week-status status-locked">Upcoming</span>`;
+    else statusHtml = `<span class="week-status" style="background:rgba(239,68,68,0.08);color:#ef4444;border:1px solid rgba(239,68,68,0.2)">Missed</span>`;
+
+    const isOpen = isCurrentWeek || sub;
+    html += `<div class="week-card${isOpen ? ' open' : ''}" id="wcard-${wk.week}">
+      <div class="week-card-header${isCurrentWeek ? ' active-week' : ''}" onclick="toggleWeek(${wk.week})">
+        <div style="display:flex;align-items:center;flex:1;min-width:0">
+          <span class="week-num" style="color:${color}">Week ${wk.week}</span>
+          <div style="min-width:0">
+            <div class="week-title">${wk.title}</div>
+            <div class="week-subtitle">${wk.phase}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+          ${statusHtml}
+          <span style="color:var(--muted);font-size:16px;transition:transform 0.3s" class="wchev">▾</span>
+        </div>
+      </div>
+      <div class="week-body">
+        <div class="assignment-box">
+          <div class="assignment-label">This Week's Assignment</div>
+          <div class="assignment-task">${wk.task}</div>
+          <ul class="resource-list">
+            ${wk.resources.map(r => `<li>${r}</li>`).join('')}
+          </ul>
+        </div>
+        ${sub ? renderSubmittedView(sub) : (!isFuture ? renderSubmissionForm(wk.week, color) : `<div class="alert alert-warn">This week is not yet available. Complete previous weeks first.</div>`)}
+      </div>
+    </div>`;
+  }
+  list.innerHTML = html;
+
+  // Scroll to current week
+  const cur = document.getElementById(`wcard-${currentWeek}`);
+  if (cur) setTimeout(() => cur.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+}
+
+function renderSubmissionForm(week, color) {
+  return `<div class="submission-form">
+    <div class="submission-form-title">📝 Submit Week ${week}</div>
+    <div class="form-group">
+      <label class="form-label">What did you learn this week?</label>
+      <textarea class="form-textarea" id="sum-${week}" placeholder="Summarise the key concepts, tools, or ideas you learned. Be specific — what clicked for you this week?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">What did you build or do?</label>
+      <textarea class="form-textarea" id="work-${week}" placeholder="Describe what you built, practised, or completed. What decisions did you make? What was hard?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Link to your work (optional)</label>
+      <input class="form-input" type="url" id="link-${week}" placeholder="https://github.com/yourname/project or any public link">
+    </div>
+    <div id="submitErr-${week}" class="alert alert-error" style="display:none"></div>
+    <button class="btn btn-primary" onclick="submitWeek(${week})" style="background:${color}">Submit Week ${week} →</button>
+  </div>`;
+}
+
+function renderSubmittedView(sub) {
+  return `<div class="submitted-view">
+    <div class="submitted-label">✓ Submitted on ${sub.submittedAt}</div>
+    <div class="submitted-field">
+      <div class="submitted-field-label">What you learned</div>
+      <div class="submitted-field-value">${sub.summary}</div>
+    </div>
+    <div class="submitted-field">
+      <div class="submitted-field-label">What you built or did</div>
+      <div class="submitted-field-value">${sub.work}</div>
+    </div>
+    ${sub.link ? `<div class="submitted-field">
+      <div class="submitted-field-label">Your link</div>
+      <a href="${sub.link}" target="_blank" class="submitted-link">${sub.link}</a>
+    </div>` : ''}
+  </div>`;
+}
+
+function toggleWeek(week) {
+  const card = document.getElementById(`wcard-${week}`);
+  card.classList.toggle('open');
+}
+
+async function submitWeek(week) {
+  const summary = document.getElementById(`sum-${week}`)?.value.trim();
+  const work = document.getElementById(`work-${week}`)?.value.trim();
+  const link = document.getElementById(`link-${week}`)?.value.trim();
+  const err = document.getElementById(`submitErr-${week}`);
+
+  if (!summary || summary.length < 20) { showErr(err, 'Please write a proper summary (at least 20 characters).'); return; }
+  if (!work || work.length < 20) { showErr(err, 'Please describe what you built or did (at least 20 characters).'); return; }
+
+  const data = {
+    summary,
+    work,
+    link: link || '',
+    submittedAt: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+    submittedTs: Date.now()
+  };
+
+  await saveSubmission(currentUser.code, week, data);
+
+  // Re-render the week body
+  const curriculum = generateCurriculum(currentUser.domain);
+  const wk = curriculum.find(w => w.week === week);
+  const card = document.getElementById(`wcard-${week}`);
+  const body = card.querySelector('.week-body');
+  body.querySelector('.submission-form').outerHTML = renderSubmittedView(data);
+  body.innerHTML = body.innerHTML; // trigger re-parse
+
+  // Update status badge
+  const statusEl = card.querySelector('.week-status');
+  if (statusEl) { statusEl.className = 'week-status status-done'; statusEl.textContent = '✓ Submitted'; }
+
+  // Refresh stats
+  await renderMenteeDash();
+}
+
+function getCurrentWeek(startDate) {
+  if (!startDate) return 1;
+  const start = new Date(startDate);
+  const now = new Date();
+  const diffMs = now - start;
+  const diffWeeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1;
+  return Math.max(1, Math.min(48, diffWeeks));
+}
+
+// ─────────────────────────────
+// MENTOR DASHBOARD
+// ─────────────────────────────
+async function renderMentorDash() {
+  const codes = await getCodes();
+  const mentees = Object.entries(codes).map(([code, data]) => ({ code, ...data }));
+  const totalMentees = mentees.length;
+
+  let totalSubs = 0;
+  let activeThisWeek = 0;
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  for (const m of mentees) {
+    const curriculum = generateCurriculum(m.domain);
+    for (let w = 1; w <= curriculum.length; w++) {
+      const s = await getSubmission(m.code, w);
+      if (s) {
+        totalSubs++;
+        if (s.submittedTs && s.submittedTs > weekAgo) activeThisWeek++;
+      }
+    }
+  }
+
+  document.getElementById('mentorStats').innerHTML = `
+    <div class="stat-box"><span class="stat-num" style="color:var(--purple)">${totalMentees}</span><div class="stat-label">Total Mentees</div></div>
+    <div class="stat-box"><span class="stat-num" style="color:var(--accent2)">${totalSubs}</span><div class="stat-label">Total Submissions</div></div>
+    <div class="stat-box"><span class="stat-num" style="color:var(--accent)">${activeThisWeek}</span><div class="stat-label">Submitted This Week</div></div>
+    <div class="stat-box"><span class="stat-num" style="color:#f59e0b">${totalMentees > 0 ? Math.round((activeThisWeek / totalMentees) * 100) : 0}%</span><div class="stat-label">Weekly Engagement</div></div>`;
+
+  renderMenteesTab(mentees);
+  await renderSubmissionsTab(mentees);
+  renderCodesTab(mentees);
+}
+
+function renderMenteesTab(mentees) {
+  const el = document.getElementById('tabMentees');
+  if (mentees.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-text">No mentees yet. Click "Add Mentee" to create your first access code.</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div style="overflow-x:auto"><table class="mentee-table">
+    <thead><tr>
+      <th>Name</th><th>Domain Track</th><th>Email</th><th>Start Date</th><th>Progress</th>
+    </tr></thead>
+    <tbody>
+      ${mentees.map(m => {
+        const color = DOMAIN_COLORS[m.domain] || '#ff6b2b';
+        const cw = getCurrentWeek(m.startDate);
+        const pct = Math.round((cw / 48) * 100);
+        return `<tr>
+          <td><strong>${m.name}</strong><br><span style="font-size:12px;color:var(--muted);font-family:monospace">${m.code}</span></td>
+          <td><span class="domain-badge" style="background:${color}18;color:${color};border:1px solid ${color}40">${m.domain}</span></td>
+          <td style="color:var(--muted)">${m.email}</td>
+          <td style="color:var(--muted)">${m.startDate || 'N/A'}</td>
+          <td>
+            <span style="font-size:13px">Week ${cw} of 48</span>
+            <div class="progress-mini"><div class="progress-mini-fill" style="width:${pct}%;background:${color}"></div></div>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+async function renderSubmissionsTab(mentees) {
+  const el = document.getElementById('tabSubmissions');
+  el.innerHTML = '<div class="spinner"></div>';
+  let allSubs = [];
+
+  for (const m of mentees) {
+    const curriculum = generateCurriculum(m.domain);
+    for (let w = 1; w <= curriculum.length; w++) {
+      const s = await getSubmission(m.code, w);
+      if (s) {
+        const wkData = curriculum.find(c => c.week === w);
+        allSubs.push({ mentee: m, week: w, weekTitle: wkData?.title || `Week ${w}`, ...s });
+      }
+    }
+  }
+
+  allSubs.sort((a, b) => (b.submittedTs || 0) - (a.submittedTs || 0));
+
+  if (allSubs.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">No submissions yet. Mentees will appear here after they complete their first week.</div></div>`;
+    return;
+  }
+
+  el.innerHTML = allSubs.map(s => {
+    const color = DOMAIN_COLORS[s.mentee.domain] || '#ff6b2b';
+    return `<div class="sub-card">
+      <div class="sub-card-header">
+        <div>
+          <strong>${s.mentee.name}</strong>
+          <span style="margin:0 8px;color:var(--muted)">·</span>
+          <span class="domain-badge" style="background:${color}18;color:${color};border:1px solid ${color}40;font-size:11px">${s.mentee.domain}</span>
+          <span style="margin:0 8px;color:var(--muted)">·</span>
+          <span style="font-size:13px;color:var(--accent)">Week ${s.week}: ${s.weekTitle}</span>
+        </div>
+        <span class="sub-meta">${s.submittedAt}</span>
+      </div>
+      <div class="sub-body">
+        <p><strong style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.08em">What they learned</strong><br>${s.summary}</p>
+        <p><strong style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.08em">What they built</strong><br>${s.work}</p>
+        ${s.link ? `<p><strong style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.08em">Link</strong><br><a href="${s.link}" target="_blank">${s.link}</a></p>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCodesTab(mentees) {
+  const el = document.getElementById('tabCodes');
+  if (mentees.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔑</div><div class="empty-text">No access codes yet. Click "Add Mentee" to generate your first one.</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div style="margin-bottom:16px;color:var(--muted);font-size:14px">Share each code privately with the corresponding mentee. They enter it on the login screen.</div>` +
+    mentees.map(m => {
+      const color = DOMAIN_COLORS[m.domain] || '#ff6b2b';
+      return `<div class="code-display">
+        <div>
+          <div class="code-val">${m.code}</div>
+          <div class="code-meta">${m.name} · ${m.domain} · ${m.email}</div>
+        </div>
+        <button class="btn-copy" onclick="navigator.clipboard.writeText('${m.code}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})">Copy</button>
+      </div>`;
+    }).join('');
+}
+
+// ─────────────────────────────
+// ADD MENTEE MODAL
+// ─────────────────────────────
+function showAddCode() {
+  document.getElementById('newName').value = '';
+  document.getElementById('newEmail').value = '';
+  document.getElementById('newDomain').value = '';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('newCodeResult').style.display = 'none';
+  document.getElementById('modalBtns').style.display = 'flex';
+  document.getElementById('modalDoneBtn').style.display = 'none';
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+}
+
+async function addMentee() {
+  const name = document.getElementById('newName').value.trim();
+  const email = document.getElementById('newEmail').value.trim();
+  const domain = document.getElementById('newDomain').value;
+  const err = document.getElementById('modalError');
+
+  if (!name) { showErr(err, 'Please enter a name.'); return; }
+  if (!email || !email.includes('@')) { showErr(err, 'Please enter a valid email.'); return; }
+  if (!domain) { showErr(err, 'Please select a domain track.'); return; }
+
+  const code = generateCode(name);
+  const codes = await getCodes();
+  codes[code] = {
+    name,
+    email,
+    domain,
+    startDate: new Date().toISOString().split('T')[0],
+    createdAt: new Date().toLocaleDateString()
+  };
+  await saveCodes(codes);
+
+  document.getElementById('generatedCode').textContent = code;
+  document.getElementById('generatedMeta').textContent = `${name} · ${domain}`;
+  document.getElementById('newCodeResult').style.display = 'block';
+  document.getElementById('modalBtns').style.display = 'none';
+  document.getElementById('modalDoneBtn').style.display = 'block';
+}
+
+function generateCode(name) {
+  const base = name.split(' ')[0].toUpperCase().replace(/[^A-Z]/g, '').substring(0, 6);
+  const num = Math.floor(1000 + Math.random() * 9000);
+  return `${base}-${num}`;
+}
+
+function copyCode() {
+  const code = document.getElementById('generatedCode').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    event.target.textContent = 'Copied!';
+    setTimeout(() => event.target.textContent = 'Copy', 1500);
+  });
+}
+
+async function refreshMentorDash() {
+  await renderMentorDash();
+}
+
+// ─────────────────────────────
+// TABS
+// ─────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.dash-tab').forEach((t, i) => {
+    const ids = ['tabMentees','tabSubmissions','tabCodes'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─────────────────────────────
+// INIT
+// ─────────────────────────────
+// Close modal overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
